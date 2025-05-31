@@ -105,7 +105,8 @@ const OTPVerification = () => {
 
   // Handle Resend OTP
   const handleResend = async () => {
-  const Baseurl=process.env.VITE_API_BASE_URL ;
+  const Baseurl=import.meta.env.VITE_API_BASE_URL ;
+  
     try {
       await axios.post(`${Baseurl}/users/resend-otp`, { role:"user" ,email});
 
