@@ -52,6 +52,7 @@ console.log(role);
 
   return (
     <>
+    <div className="w-[250px] mx-auto my-4 flex justify-center">
     <GoogleLogin
       onSuccess={handleSuccess}
       onError={handleFailure}
@@ -61,7 +62,9 @@ console.log(role);
       logo_alignment="center"
     
     />
+   </div>
     <ToastContainer position="top-right" autoClose={3000} />
+    
     </>
   );
 };
