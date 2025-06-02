@@ -23,14 +23,14 @@ const RideDetailsModal = ({ open, onClose, booking }: any) => {
           <Grid item xs={6}>
             <Typography variant="subtitle2">User</Typography>
             <Box display="flex" alignItems="center" gap={1}>
-              <Avatar src={`/${booking.userImage}`} />
+              <Avatar src={`${import.meta.env.VITE_IMAGEURL}/${booking.userImage}`} />
               <Typography>{booking.username}</Typography>
             </Box>
           </Grid>
           <Grid item xs={6}>
             <Typography variant="subtitle2">Driver</Typography>
             <Box display="flex" alignItems="center" gap={1}>
-              <Avatar src={`/${booking.driverImage}`} />
+              <Avatar src={`${import.meta.env.VITE_IMAGEURL}/${booking.driverImage}`} />
               <Typography>{booking.drivername}</Typography>
             </Box>
           </Grid>
@@ -95,6 +95,12 @@ const RideDetailsModal = ({ open, onClose, booking }: any) => {
             <Typography>{booking.status}</Typography>
           </Grid>
 
+          {booking.walletDeduction > 0 && (
+            <Grid item xs={6}>
+              <Typography variant="subtitle2">Wallet Deduction</Typography>
+              <Typography color="text.secondary">₹{booking.walletDeduction}</Typography>
+            </Grid>
+          )}
           {booking.reason && (
             <Grid item xs={12}>
               <Typography variant="subtitle2">Reason</Typography>
