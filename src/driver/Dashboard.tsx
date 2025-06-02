@@ -37,6 +37,7 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import VerifiedIcon from '@mui/icons-material/CreditScore'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EnhancedAlerts from "../components/Alert";
+import { CreatesocketConnection } from "../constant/socket";
 const DriverDashboard: React.FC = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,6 +76,27 @@ const [editedLicenseNumber, setEditedLicenseNumber] = useState(driverState?.lice
    const [isUpdating, setIsUpdating] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
+useEffect(() => {
+  const socket = CreatesocketConnection();
+
+  socket.on('admin:changeDriverStatus', (data: any) => {
+    const updatePayload: any = {
+      status: data.status,
+    };
+
+    if (data.reason) {
+      updatePayload.reason = data.reason;
+    }
+
+    dispatch(updateDriver(updatePayload));
+  });
+
+  //  return cleanup function
+  return () => {
+    socket.off('admin:changeDriverStatus');
+  };
+}, [dispatch, driverState]);
+
   useEffect(() => {
     setEditedName(driverState?.name || "");
     setEditedAadhaarNumber(driverState?.aadhaarNumber || "")

@@ -553,7 +553,7 @@ const onEmojiClick = (emojiObject:EmojiClickData) => {
                       {userData?.name || (msgSenderType === 'User' ? 'User' : 'Driver')}
                     </Typography>
                   )}
-                  {hoveredMsgId === msg._id && (<Box sx={{ alignSelf: 'flex-end', mt: 0.5 }}>
+                  {hoveredMsgId === msg._id &&currentUser?._id==msg.senderId&& (<Box sx={{ alignSelf: 'flex-end', mt: 0.5 }}>
   <IconButton
     size="small"
     onClick={(e) => handlePopoverOpen(e, msg._id!)}
