@@ -21,6 +21,8 @@ import {
   Rating,
 } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
 import RouteIcon from "@mui/icons-material/Route";
 import HistoryIcon from "@mui/icons-material/History";
 
@@ -36,7 +38,9 @@ import { handleDriverData } from '../Api/driverService';
 import moment from "moment";
 import ApiService from '../Api/ApiService';
 const menuItems = [
-  { text: "Dashboard", icon: <DashboardIcon />, path: "/driver" },
+    {text:"Dashboard",icon:<DashboardIcon/>,path:"/driver/dashboard"},
+  { text: "Profile", icon: <AccountCircleIcon/>, path: "/driver" },
+
   { text: "Ride Management", icon: <RouteIcon />, path: "/driver/rides" },
   { text: "Trip History", icon: <HistoryIcon />, path: "/driver/history" },
  

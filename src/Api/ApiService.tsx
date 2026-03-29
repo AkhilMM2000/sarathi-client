@@ -9,13 +9,13 @@ class ApiService {
     this.baseUrl = import.meta.env.VITE_API_BASE_URL 
   }
 
-  async registerUser(formData: Record<string, any>, type: "users" | "drivers") {
+  async registerUser(userData: Record<string, any>, type: "users" | "drivers") {
     try {
-      const response = await axios.post(`${this.baseUrl}/${type}/register`, formData);
+      const response = await axios.post(`${this.baseUrl}/${type}/register`, userData);
       return response.data;
     } catch (error: any) {
-     
-      throw error.response?.data?.error || "Registration failed";
+      // Improve client-side reporting of 500 errors
+      throw error.response?.data?.message || error.response?.data?.error || "Registration failed";
     }
   }
   
@@ -27,6 +27,16 @@ class ApiService {
       throw error; 
     }
 
+  }
+
+  async resendOTP(email: string, role: string) {
+    try {
+      const type = role === "driver" ? "drivers" : "users";
+      const response = await axios.post(`${this.baseUrl}/${type}/resend-otp`, { email, role });
+      return response.data;
+    } catch (error: any) {
+      throw error;
+    }
   }
 
   async uploadImage(image: File) {
@@ -61,34 +71,36 @@ class ApiService {
     }
   }
   
-  async uploadFile(file: File, signedData: any): Promise<string> {
-  
+  async uploadFile(file: File, signedData: any, onProgress?: (percent: number) => void): Promise<string> {
     try {
-     
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("api_key",import.meta.env.VITE_CLOUDINARY_API_KEY);
+      formData.append("api_key", import.meta.env.VITE_CLOUDINARY_API_KEY);
       formData.append("timestamp", signedData.timestamp.toString());
       formData.append("signature", signedData.signature);
       formData.append("public_id", signedData.public_id);
-      formData.append("folder", signedData.folder); // Optional but recommended
-      // formData.append("transformation","c_fill,w_600,h_600");
+      formData.append("folder", signedData.folder);
 
-  
       const response = await axios.post(
         `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
-        formData
+        formData,
+        {
+          onUploadProgress: (progressEvent) => {
+            if (onProgress && progressEvent.total) {
+              const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+              onProgress(percentCompleted);
+            }
+          }
+        }
       );
-  
-  
+
       if (response.status === 200) {
-        return response.data.public_id;; // Store this in the database
+        return response.data.public_id;
       }
-  
+
       throw new Error("File upload failed");
     } catch (error: any) {
       throw error.response?.data?.message || "File upload failed";
-  
     }
   }
   
@@ -175,5 +187,3 @@ async uploadFileInChat(file: File, signedData: any): Promise<string> {
 }
 
 export default new ApiService(); 
-
-

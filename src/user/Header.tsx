@@ -1,135 +1,244 @@
-import { AppBar, Toolbar, Typography, Box, Container, Button } from "@mui/material";
-import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import PersonIcon from "@mui/icons-material/Person";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { 
+  AppBar, 
+  Toolbar, 
+  Typography, 
+  Box, 
+  Container, 
+  Button, 
+  IconButton,
+  Menu,
+  MenuItem,
+  useScrollTrigger,
+  Slide
+} from "@mui/material";
+import { 
+  Car, 
+  User, 
+  Menu as MenuIcon, 
+  ChevronDown,
+  Phone,
+  Info,
+  Home as HomeIcon
+} from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+
+interface Props {
+  children: React.ReactElement;
+}
+
+// Hide header on scroll down, show on scroll up logic
+function HideOnScroll(props: Props) {
+  const { children } = props;
+  const trigger = useScrollTrigger();
+
+  return (
+    <Slide appear={false} direction="down" in={!trigger}>
+      {children}
+    </Slide>
+  );
+}
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileAnchor, setMobileAnchor] = useState<null | HTMLElement>(null);
 
-  const handleNavigation = (type: string) => {
-    navigate(`/login?type=${type}`);
+  // Monitor scroll for glassmorph intensity
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setMobileAnchor(null);
   };
 
+  const navItems = [
+    { label: "Home", path: "/", icon: <HomeIcon size={18} /> },
+    { label: "About", path: "/about", icon: <Info size={18} /> },
+    { label: "Support", path: "/support", icon: <Phone size={18} /> },
+  ];
+
   return (
-    <AppBar 
-      position="fixed" 
-      color="primary" 
-      elevation={4}
-      sx={{ 
-        padding: "12px 0",
-        background: "linear-gradient(45deg, #1976d2 30%, #2196f3 90%)",
-      }}
-    >
-      <Container maxWidth="lg">
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          
-          {/* Left Side: Brand + Driver Login */}
-          <Box sx={{ 
-            display: "flex", 
-            alignItems: "center",
-            gap: 2,
-            "@media (max-width: 768px)": {
-              flexDirection: "column",
-              alignItems: "flex-start",
-              gap: 1
-            }
-          }}>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <DirectionsCarIcon 
-                fontSize="large" 
-                sx={{ marginRight: 1, color: "#fff" }} 
-              />
+    <HideOnScroll>
+      <AppBar 
+        position="fixed" 
+        elevation={0}
+        sx={{ 
+          background: isScrolled 
+            ? "rgba(15, 23, 42, 0.8)" 
+            : "transparent",
+          backdropFilter: isScrolled ? "blur(12px)" : "none",
+          borderBottom: isScrolled ? "1px solid rgba(255, 255, 255, 0.1)" : "none",
+          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          py: isScrolled ? 0.5 : 1.5,
+          zIndex: 1100
+        }}
+      >
+        <Container maxWidth="xl">
+          <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
+            
+            {/* Logo Section */}
+            <Box 
+              onClick={() => navigate("/")}
+              sx={{ 
+                display: "flex", 
+                alignItems: "center", 
+                cursor: "pointer",
+                gap: 1.5 
+              }}
+            >
+              <motion.div
+                whileHover={{ rotate: 15, scale: 1.1 }}
+                style={{
+                  background: "linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)",
+                  padding: '8px',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 4px 15px rgba(79, 70, 229, 0.4)'
+                }}
+              >
+                <Car size={24} color="white" />
+              </motion.div>
               <Typography 
                 variant="h5" 
-                fontWeight="bold"
                 sx={{ 
-                  letterSpacing: "1px",
-                  textShadow: "1px 1px 2px rgba(0,0,0,0.2)"
+                  fontWeight: 900, 
+                  letterSpacing: '-0.02em',
+                  background: 'linear-gradient(to right, #fff, #94a3b8)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  display: { xs: 'none', sm: 'block' }
                 }}
               >
                 Sarathi
               </Typography>
             </Box>
-            
-            <Button 
-              variant="contained" 
-              color="secondary"
-              startIcon={<DirectionsCarIcon />}
-              onClick={() => handleNavigation("driver")}
-              sx={{ 
-                fontWeight: "bold",
-                boxShadow: "0px 3px 5px rgba(0,0,0,0.2)",
-                "&:hover": {
-                  transform: "translateY(-2px)",
-                  boxShadow: "0px 4px 6px rgba(0,0,0,0.3)",
-                }
-              }}
-            >
-              Driver Login
-            </Button>
-          </Box>
 
-          {/* Center description - Hidden on very small screens */}
-          <Box sx={{ 
-            position: "absolute",
-            left: "50%",
-            transform: "translateX(-50%)",
-            textAlign: "center",
-            width: "40%",
-            display: { xs: "none", md: "block" }
-          }}>
-            <Typography 
-              variant="body1" 
-              sx={{ 
-                fontWeight: 300,
-                lineHeight: 1.5
-              }}
-            >
-              This platform allows users to connect with drivers, and drivers can get rides.
-            </Typography>
-          </Box>
+            {/* Desktop Navigation */}
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 4, alignItems: 'center' }}>
+              {navItems.map((item) => (
+                <Typography
+                  key={item.label}
+                  onClick={() => handleNavigation(item.path)}
+                  sx={{
+                    color: location.pathname === item.path ? '#fff' : 'rgba(255,255,255,0.6)',
+                    fontWeight: 600,
+                    fontSize: '0.95rem',
+                    cursor: 'pointer',
+                    '&:hover': { color: '#fff' },
+                    transition: 'color 0.2s',
+                    position: 'relative',
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      bottom: -4,
+                      left: 0,
+                      width: location.pathname === item.path ? '100%' : '0%',
+                      height: '2px',
+                      background: '#6366f1',
+                      transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                    }
+                  }}
+                >
+                  {item.label}
+                </Typography>
+              ))}
+            </Box>
 
-          {/* Right Side: User Login */}
-          <Box>
-            <Button 
-              variant="contained" 
-              color="secondary"
-              startIcon={<PersonIcon />}
-              onClick={() => handleNavigation("user")}
-              sx={{ 
-                fontWeight: "bold",
-                boxShadow: "0px 3px 5px rgba(0,0,0,0.2)",
-                "&:hover": {
-                  transform: "translateY(-2px)",
-                  boxShadow: "0px 4px 6px rgba(0,0,0,0.3)",
-                }
-              }}
-            >
-              User Login
-            </Button>
-          </Box>
-        </Toolbar>
-        
-        {/* Description for mobile - Only visible on small screens */}
-        <Box sx={{ 
-          display: { xs: "block", md: "none" },
-          textAlign: "center",
-          mt: 1,
-          mb: 1,
-          px: 2
-        }}>
-          <Typography 
-            variant="body2" 
-            sx={{ 
-              fontWeight: 300,
-              lineHeight: 1.4
-            }}
-          >
-            This platform allows users to connect with drivers, and drivers can get rides.
-          </Typography>
-        </Box>
-      </Container>
-    </AppBar>
+            {/* CTA Buttons Section */}
+            <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 2 } }}>
+              
+              {/* Login/Register Dropdown or Buttons */}
+              <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 1.5 }}>
+                <Button
+                  variant="text"
+                  sx={{ 
+                    color: 'rgba(255,255,255,0.7)', 
+                    textTransform: 'none', 
+                    fontWeight: 600,
+                    '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.05)' }
+                  }}
+                  onClick={() => navigate('/login')}
+                >
+                  Log In
+                </Button>
+                <Button
+                  variant="contained"
+                  sx={{ 
+                    bgcolor: '#4f46e5',
+                    borderRadius: '12px',
+                    textTransform: 'none',
+                    px: 3,
+                    fontWeight: 700,
+                    boxShadow: '0 8px 20px rgba(79, 70, 229, 0.3)',
+                    '&:hover': { 
+                      bgcolor: '#4338ca',
+                      boxShadow: '0 12px 25px rgba(79, 70, 229, 0.4)',
+                      transform: 'translateY(-1px)'
+                    },
+                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+                  }}
+                  onClick={() => navigate('/user')}
+                >
+                  Sign Up
+                </Button>
+              </Box>
+
+              {/* Mobile Menu Icon */}
+              <IconButton 
+                sx={{ display: { xs: 'flex', md: 'none' }, color: 'white' }}
+                onClick={(e) => setMobileAnchor(e.currentTarget)}
+              >
+                <MenuIcon />
+              </IconButton>
+
+              <Menu
+                anchorEl={mobileAnchor}
+                open={Boolean(mobileAnchor)}
+                onClose={() => setMobileAnchor(null)}
+                PaperProps={{
+                  sx: {
+                    mt: 1.5,
+                    bgcolor: '#1e293b',
+                    color: 'white',
+                    minWidth: 200,
+                    borderRadius: '16px',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    '& .MuiMenuItem-root': {
+                      py: 1.5,
+                      gap: 2,
+                      '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
+                    }
+                  }
+                }}
+              >
+                {navItems.map((item) => (
+                  <MenuItem key={item.label} onClick={() => handleNavigation(item.path)}>
+                    {item.icon}
+                    {item.label}
+                  </MenuItem>
+                ))}
+                <Box sx={{ p: 1, mt: 1, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                   <Button fullWidth onClick={() => handleNavigation('/login')} sx={{ color: 'white', textTransform: 'none' }}>Log In</Button>
+                   <Button fullWidth variant="contained" onClick={() => handleNavigation('/user')} sx={{ mt: 1, bgcolor: '#4f46e5', textTransform: 'none' }}>Sign Up</Button>
+                </Box>
+              </Menu>
+            </Box>
+
+          </Toolbar>
+        </Container>
+      </AppBar>
+    </HideOnScroll>
   );
 };
 

@@ -12,6 +12,7 @@ import { RideHistoryPage } from "../components/RideHistoryPage";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/ReduxStore";
 import NotFound from "../components/NotFound";
+import DriverStatusDashboard from "../driver/DriverDashboard";
 
 
 const DriverRoute = () => {
@@ -30,6 +31,7 @@ const DriverRoute = () => {
 
      <Route path="/driver" element={<DriverSidebar/>}>
      <Route index element={<DriverDashboard/>} />
+     <Route path="dashboard" element={<DriverStatusDashboard/>} />
      <Route path="onboard-success" element={<DriverOnboardingComplete />}/>
      <Route path="onboard-failure'" element={<DriverOnboardingComplete />}/>
       <Route path="rides" element={<RidesDriver/>} />

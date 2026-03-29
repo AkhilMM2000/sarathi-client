@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import LocationSelector from "../components/Bookdriver";
 import { Typography, Avatar, Rating,  Button, Box, Paper, Divider, FormGroup, FormControlLabel, Checkbox, Grid, Snackbar, Alert } from "@mui/material";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useNearbyDrivers } from "../hooks/useNearbyDrivers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
@@ -20,13 +19,17 @@ interface BookingData {
   distance: string;
   duration: string;
 }
+import { DriverData } from "../constant/types";
+import { getDriverWithDistance } from "../Api/driverService";
 
 function BookDriver() {
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
 
   const [openFareModal, setOpenFareModal] = useState(false);
 const {driverID}=useParams()
-const driverData=useNearbyDrivers(driverID)
+const [driverData, setDriverData] = useState<
+  (DriverData & { distance: number }) | null
+>(null);
 const [isRangeMode, setIsRangeMode] = useState<boolean>(false);
   const [singleDate, setSingleDate] = useState<Dayjs | null>(null);
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
@@ -38,7 +41,21 @@ const [isRangeMode, setIsRangeMode] = useState<boolean>(false);
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
-  
+  useEffect(()=>{
+if (!driverID) return;
+
+    const fetchDriver = async () => {
+      try {
+   
+        const data = await getDriverWithDistance('user',driverID);
+        setDriverData(data);
+      } catch (err) {
+      console.log(err)
+      }
+    };
+
+    fetchDriver();
+  },[driverID])
   // Handle checkbox change
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setIsRangeMode(event.target.checked);
@@ -99,7 +116,7 @@ console.log('endate',endDate?.toDate())
       // Prepare booking data
       const bookingPayload = isRangeMode
         ? {
-            driverId: driverData[0]?._id,
+            driverId: driverData?._id,
             fromLocation: bookingData?.from || "",
             toLocation: bookingData?.to,
             startDate: startDate,
@@ -110,7 +127,7 @@ console.log('endate',endDate?.toDate())
         : {
              fromLocation: bookingData?.from || "",
              toLocation: bookingData?.to,
-            driverId: driverData[0]?._id,
+            driverId: driverData?._id,
             startDate: singleDate?.toISOString(),
             estimatedKm:  bookingData?.distance.replace(/,/g, "").replace(" km", ""),
             bookingType: "ONE_RIDE",
@@ -181,7 +198,7 @@ console.log('endate',endDate?.toDate())
             <Typography variant="h6" className="font-semibold">Available Drivers</Typography>
           </div>
           
-          { driverData.length === 0 ? (
+          { !driverData?._id? (
           
             <Typography className="text-center py-12">No drivers available in this area</Typography>
           ) : (
@@ -190,7 +207,7 @@ console.log('endate',endDate?.toDate())
                 {/* Driver Avatar */}
                 <div className="relative">
                   <Avatar 
-                    src={`${import.meta.env.VITE_IMAGEURL}/${driverData[0]?.profileImage}`} 
+                    src={`${import.meta.env.VITE_IMAGEURL}/${driverData.profileImage}`} 
                     alt="Driver" 
                     className="w-20 h-20 mb-2 sm:mb-0 border-2 border-blue-500"
                   />
@@ -199,12 +216,12 @@ console.log('endate',endDate?.toDate())
 
                 {/* Driver Details */}
                 <div className="sm:ml-4 flex-1">
-                  <Typography variant="subtitle1" className="font-medium">{driverData[0]?.mobile}</Typography>
+                  <Typography variant="subtitle1" className="font-medium">{driverData.mobile}</Typography>
                   <div className="flex items-center">
-                    <Rating value={driverData[0]?.averageRating} precision={0.1} size="small" readOnly />
-                    <Typography variant="body2" className="ml-2">{driverData[0]?.email}</Typography>
+                    <Rating value={driverData.averageRating} precision={0.1} size="small" readOnly />
+                    <Typography variant="body2" className="ml-2">{driverData.email}</Typography>
                   </div>
-                  <Typography variant="body2" color="text.secondary">{driverData[0]?.place}</Typography>
+                  <Typography variant="body2" color="text.secondary">{driverData.place}</Typography>
                   <div className="mt-1 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full inline-block">
           <Button
     variant="outlined"
@@ -219,7 +236,7 @@ console.log('endate',endDate?.toDate())
 
                 {/* Driver Distance */}
                 <div className="text-center bg-blue-50 p-2 rounded-lg mt-2 sm:mt-0">
-                  <Typography variant="h6" className="font-bold text-blue-800">{driverData[0]?.distance} Km</Typography>
+                  <Typography variant="h6" className="font-bold text-blue-800">{driverData.distance} Km</Typography>
                   <Typography variant="caption" className="text-blue-600">away</Typography>
                 </div>
               </div>
@@ -359,12 +376,12 @@ console.log('endate',endDate?.toDate())
 
   </LocalizationProvider>
 </Paper>
-     {driverData[0]._id && (
+     {driverData?._id && (
         <ViewReviewsModal
         role="user"
           open={openReviewModal}
           onClose={() => setOpenReviewModal(false)}
-          driverId={driverData[0]._id }
+          driverId={driverData?._id }
         />
       )}
     {/* Book Now Button */}

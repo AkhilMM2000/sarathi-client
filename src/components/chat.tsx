@@ -80,6 +80,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ open, onClose, senderType, roomId
   const currentUser = useSelector((state: RootState) =>
     senderType === 'user' ? state.authUser.user : state.driverStore.driver
   );
+  console.log(senderType,recieverId,userData)
 //delete message popover and delete message functionality
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
  const [hoveredMsgId, setHoveredMsgId] = useState<string | null>(null);
@@ -350,9 +351,10 @@ const onEmojiClick = (emojiObject:EmojiClickData) => {
       window.removeEventListener('resize', checkIfMobile);
     };
   }, []);
+   
   if (loading) return <div>Loading...</div>;
   if (apiError) return <div>Error: {apiError}</div>;
- 
+  
   return (
     <> 
       <Dialog

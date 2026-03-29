@@ -18,12 +18,16 @@ const useFetchChatUserData = (senderType: 'user' | 'driver', receiverId: string)
 
   useEffect(() => {
     const fetchData = async () => {
+     
       setLoading(true);
       try {
         let response;
+       
         if (senderType === 'user') {
+          
           response = await UserAPI.get(`/driver/${receiverId}`);
-          const driver: DriverData = response.data.driver;
+          console.log(response,'response')
+          const driver: DriverData = response.data;
           setUserData({
             id: driver._id,
             name: driver.name,
@@ -33,6 +37,7 @@ const useFetchChatUserData = (senderType: 'user' | 'driver', receiverId: string)
             onlineStatus: driver.onlineStatus,
           });
         } else if (senderType === 'driver') {
+          
           response = await DriverAPI.get(`/user/${receiverId}`);
           const user: IUser = response.data.user;
           setUserData({
@@ -45,6 +50,7 @@ const useFetchChatUserData = (senderType: 'user' | 'driver', receiverId: string)
           });
         }
       } catch (err) {
+       console.log(err)
         setError('Failed to load user data');
       } finally {
         setLoading(false);

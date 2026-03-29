@@ -70,15 +70,40 @@ export const DriverStatusHandle = async (
     throw error;
   }
 };
+export const GetDriverswithDistance = async (
+  role: UserRole,
+  page: number,
+  limit: number,
+  search: string
+) => {
+  try {
+    const apiInstance = getApiInstance(role);
 
-export const GetDriverswithDistance=async(  role: UserRole)=>{
-      try {
-        const apiInstance = getApiInstance(role);
-        const response = await apiInstance.get(`/nearby`);
+    const response = await apiInstance.get("/nearby", {
+      params: {
+        page,
+        limit,
+        search,
+      },
+    });
 
-        return response.data;
-      } catch (error) {
-        throw error
-      }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
-}
+export const getDriverWithDistance=async(role: UserRole,
+  driverId:string)=>{
+  try {
+    const apiInstance = getApiInstance(role);
+
+     const response = await apiInstance.get(`/driver/${driverId}`);
+
+    return response.data;
+  } catch (error) {
+    throw error
+  }
+
+
+} 
