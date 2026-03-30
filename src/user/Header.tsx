@@ -62,8 +62,8 @@ const Header = () => {
 
   const navItems = [
     { label: "Home", path: "/", icon: <HomeIcon size={18} /> },
-    { label: "About", path: "/about", icon: <Info size={18} /> },
-    { label: "Support", path: "/support", icon: <Phone size={18} /> },
+    { label: "About", path: "/", icon: <Info size={18} /> },
+    { label: "Support", path: "/", icon: <Phone size={18} /> },
   ];
 
   return (

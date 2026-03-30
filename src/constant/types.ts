@@ -84,8 +84,8 @@ export interface RideHistory {
   startDate: string;
   estimatedKm: number;
   estimatedFare: number;
-  status: "CANCELLED" | "REJECTED";
-  paymentStatus: "COMPLETED";
+  status: "CANCELLED" | "REJECTED" | "COMPLETED" | "CONFIRMED" | "PENDING";
+  paymentStatus: "COMPLETED" | "PENDING" | "FAILED";
   bookingType: "RANGE_OF_DATES" | "ONE_RIDE";
   paymentMode: "stripe";
   createdAt: string;
