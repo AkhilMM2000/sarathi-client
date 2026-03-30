@@ -30,7 +30,7 @@ import Api from "../Api/ApiService";
 import { useNavigate } from "react-router-dom";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "application/pdf"];
+const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "application/pdf",];
 
 export default function DocumentsVerify() {
   const navigate = useNavigate();
@@ -231,7 +231,7 @@ export default function DocumentsVerify() {
                   file={form.aadhaarFile}
                   preview={form.aadhaarPreview}
                   progress={uploadProgress.aadhaar}
-                  onFileSelect={(e) => handleFileChange(e, 'aadhaar')}
+                  onFileSelect={(e: React.ChangeEvent<HTMLInputElement>, type: 'aadhaar' | 'license') => handleFileChange(e, 'aadhaar')}
                   onRemove={() => removeFile('aadhaar')}
                   label="Aadhaar Card (Front/Back)"
                 />
@@ -254,7 +254,8 @@ export default function DocumentsVerify() {
                   file={form.licenseFile}
                   preview={form.licensePreview}
                   progress={uploadProgress.license}
-                  onFileSelect={(e) => handleFileChange(e, 'license')}
+                  onFileSelect={(e: React.ChangeEvent<HTMLInputElement>,
+  type: 'aadhaar' | 'license') => handleFileChange(e, 'license')}
                   onRemove={() => removeFile('license')}
                   label="Driving License Copy"
                 />
