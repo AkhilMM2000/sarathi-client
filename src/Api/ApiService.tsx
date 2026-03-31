@@ -1,5 +1,5 @@
 import axios from "axios";
-import { DriverAPI, UserAPI } from "./AxiosInterceptor";
+import { AdminAPI, DriverAPI, UserAPI } from "./AxiosInterceptor";
 
 
 class ApiService {
@@ -183,6 +183,15 @@ async uploadFileInChat(file: File, signedData: any): Promise<string> {
     }
 
  }
+
+  async getAdminDashboardStats() {
+    try {
+      const response = await AdminAPI.get("/dashboard");
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data?.message || "Failed to fetch dashboard stats";
+    }
+  }
 
 }
 
