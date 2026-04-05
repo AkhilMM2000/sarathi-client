@@ -89,7 +89,7 @@ export default function DriverRegister() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!validate()) {
-      toast.error("Please correct the errors before proceeding.");
+     
       return;
     }
 

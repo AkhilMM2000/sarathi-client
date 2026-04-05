@@ -47,34 +47,29 @@ const RateDriverModal: React.FC<RateDriverModalProps> = ({
 
     setLoading(true);
 
-
     try {
-       
-     
-  await UserAPI.post(`/review`, {
+      await UserAPI.post(`/review`, {
         driverId,
         rideId,
         rating,
         review,
       });
      
-        showSnackbar("Review submitted successfully!", "success");
+      showSnackbar("Review submitted successfully!", "success");
       onReviewSubmitted?.();
+      
       setTimeout(() => {
         onClose();
         setRating(null);
-       setReview("");
-
-       
+        setReview("");
       }, 1000);
     } catch (err: any) {
-      const message = err?.response?.data?.error || "Failed to submit review";
+      console.error("Review Submission Error:", err);
+      // Access Axios error response correctly: err.response.data.message
+      const message = err?.response?.data?.message || "Failed to submit review";
       showSnackbar(message, "error");
     } finally {
       setLoading(false);
-      setReview("");
-       onClose()
-       
     }
   };
 

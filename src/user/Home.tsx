@@ -4,20 +4,18 @@ import {
   Typography, 
   Button, 
   Grid, 
-  Card, 
-  CardContent,
   useTheme,
   useMediaQuery 
 } from "@mui/material";
 import { 
   ShieldCheck, 
   Clock, 
-  MapPin, 
   ArrowRight, 
   Car, 
   UserCircle2,
   Zap,
-  Star
+  Star,
+  MapPin
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -26,36 +24,15 @@ import Footer from "./Footer";
 const Home = () => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 500], [0, 200]);
-
-  const features = [
-    {
-      title: "Reliable Rides",
-      description: "Get a ride in minutes from our community of top-rated, local drivers.",
-      icon: <Car size={32} className="text-indigo-400" />,
-      delay: 0.1
-    },
-    {
-      title: "Safe & Secure",
-      description: "Every driver is vetted and every trip is tracked for your peace of mind.",
-      icon: <ShieldCheck size={32} className="text-emerald-400" />,
-      delay: 0.2
-    },
-    {
-      title: "Transparent Pricing",
-      description: "Know your fare upfront. No hidden costs or surprise surcharges.",
-      icon: <Zap size={32} className="text-amber-400" />,
-      delay: 0.3
-    }
-  ];
 
   return (
     <Box sx={{ bgcolor: '#0f172a', overflow: 'hidden' }}>
       
-      {/* 1. HERO SECTION WITH ANIMATED MESH GRADIENT */}
+      {/* 1. HERO SECTION */}
       <Box 
+        id="home"
         sx={{ 
           position: 'relative', 
           minHeight: '100vh', 
@@ -124,30 +101,30 @@ const Home = () => {
         </Box>
 
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 10 }}>
-          <Box maxWidth="800px">
+          <Box sx={{ maxWidth: '800px' }}>
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <Typography 
                 variant="h1" 
                 sx={{ 
                   fontWeight: 900, 
-                  fontSize: { xs: '3rem', md: '5rem' }, 
+                  fontSize: { xs: '3.2rem', md: '5.5rem' }, 
                   color: 'white', 
                   mb: 2, 
-                  letterSpacing: '-0.03em',
-                  lineHeight: 1.1 
+                  letterSpacing: '-0.04em',
+                  lineHeight: 1.05
                 }}
               >
-                The Smartest Way to <br />
+                Drive Your Way <br />
                 <span style={{ 
                   background: 'linear-gradient(90deg, #818cf8 0%, #c084fc 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent'
                 }}>
-                  Book Your Ride
+                  With Sarathi
                 </span>
               </Typography>
             </motion.div>
@@ -155,7 +132,7 @@ const Home = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             >
               <Typography 
                 variant="h5" 
@@ -164,149 +141,216 @@ const Home = () => {
                   mb: 6, 
                   maxWidth: '600px',
                   fontWeight: 400,
-                  lineHeight: 1.6
+                  lineHeight: 1.6,
+                  fontSize: { xs: '1.1rem', md: '1.35rem' }
                 }}
               >
-                Sarathi connects you with safe, vetted, and professional drivers 
-                for a premium travel experience. No surges, no stress.
+                A revolutionary platform where vehicle owners find elite, 
+                admin-verified drivers. Your car, our professional guidance.
               </Typography>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-              className="flex flex-col sm:flex-row gap-4"
+              transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
             >
-              <Button
-                variant="contained"
-                onClick={() => navigate('/user')}
-                sx={{
-                  py: 2, px: 5, borderRadius: '16px', fontSize: '1.1rem', fontWeight: 700,
-                  bgcolor: '#4f46e5', textTransform: 'none',
-                  boxShadow: '0 10px 30px rgba(79, 70, 229, 0.4)',
-                  '&:hover': { bgcolor: '#4338ca', transform: 'translateY(-2px)' },
-                  transition: 'all 0.3s'
-                }}
-                endIcon={<ArrowRight />}
-              >
-                Book a Ride
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={() => navigate('/login?type=driver')}
-                sx={{
-                  py: 2, px: 5, borderRadius: '16px', fontSize: '1.1rem', fontWeight: 700,
-                  borderColor: 'rgba(255,255,255,0.2)', color: 'white', textTransform: 'none',
-                  backdropFilter: 'blur(5px)',
-                  '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.05)' },
-                  transition: 'all 0.3s'
-                }}
-              >
-                Drive with Us
-              </Button>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 3 }}>
+                <Button
+                  variant="contained"
+                  onClick={() => navigate('/login?type=user')}
+                  sx={{
+                    py: 2.2, px: 6, borderRadius: '14px', fontSize: '1.1rem', fontWeight: 800,
+                    bgcolor: '#4f46e5', textTransform: 'none',
+                    boxShadow: '0 10px 40px rgba(79, 70, 229, 0.4)',
+                    '&:hover': { bgcolor: '#4338ca', transform: 'translateY(-3px)' },
+                    transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                  }}
+                  endIcon={<ArrowRight />}
+                >
+                  Get Started
+                </Button>
+              </Box>
             </motion.div>
           </Box>
         </Container>
       </Box>
 
-      {/* 2. FEATURES BENTO-GRID SECTION */}
-      <Box sx={{ py: 20, position: 'relative' }}>
+      {/* 2. ABOUT SECTION (BENTO GRID) */}
+      <Box id="about" sx={{ py: { xs: 15, md: 25 }, position: 'relative', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
          <Container maxWidth="lg">
-            <motion.div
-               initial={{ opacity: 0, y: 20 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: true }}
-               transition={{ duration: 0.6 }}
-               className="text-center mb-16"
-            >
-               <Typography variant="overline" sx={{ color: '#818cf8', fontWeight: 800, letterSpacing: '0.2em' }}>
-                 WHY CHOOSE SARATHI
-               </Typography>
-               <Typography variant="h3" sx={{ color: 'white', fontWeight: 800, mt: 2 }}>
-                 Experience the Premium Difference
-               </Typography>
-            </motion.div>
-
-            <Grid container spacing={4}>
-               {features.map((feature, index) => (
-                  <Grid item xs={12} md={4} key={index}>
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.6, delay: feature.delay }}
-                    >
-                       <Card 
-                         sx={{ 
-                           bgcolor: 'rgba(255,255,255,0.03)', 
-                           border: '1px solid rgba(255,255,255,0.1)',
-                           borderRadius: '24px',
-                           p: 2,
-                           height: '100%',
-                           transition: 'all 0.3s',
-                           '&:hover': { 
-                             transform: 'translateY(-10px)',
-                             bgcolor: 'rgba(255,255,255,0.05)',
-                             borderColor: 'rgba(99, 102, 241, 0.3)'
-                           }
-                         }}
-                       >
-                         <CardContent>
-                            <Box sx={{ mb: 3 }}>{feature.icon}</Box>
-                            <Typography variant="h5" sx={{ color: 'white', fontWeight: 700, mb: 1.5 }}>
-                              {feature.title}
-                            </Typography>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.5)', lineHeight: 1.7 }}>
-                              {feature.description}
-                            </Typography>
-                         </CardContent>
-                       </Card>
-                    </motion.div>
-                  </Grid>
-               ))}
+            <Grid container spacing={4} alignItems="center">
+              <Grid item xs={12} md={6}>
+                 <motion.div
+                   initial={{ opacity: 0, x: -30 }}
+                   whileInView={{ opacity: 1, x: 0 }}
+                   viewport={{ once: true }}
+                   transition={{ duration: 0.8 }}
+                 >
+                    <Typography variant="overline" sx={{ color: '#818cf8', fontWeight: 900, letterSpacing: '0.3em' }}>
+                      OUR MISSION
+                    </Typography>
+                    <Typography variant="h2" sx={{ color: 'white', fontWeight: 900, mt: 2, mb: 4, lineHeight: 1.1 }}>
+                      Revolutionizing the Ride Experience
+                    </Typography>
+                    <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '1.15rem', lineHeight: 1.8, mb: 4 }}>
+                      Sarathi is the first platform where <strong>transparency meets convenience</strong>. 
+                      We believe that vehicle owners should have access to professional, vetted drivers 
+                      without the overhead of traditional fleet services.
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                       {[
+                         { title: "User-Owned Vehicles", text: "You provide the car, we provide the expertise.", icon: <Car color="#818cf8" /> },
+                         { title: "Admin-Approved Drivers", text: "Every driver undergoes rigorous document verification.", icon: <ShieldCheck color="#10b981" /> },
+                         { title: "On-Demand Flexibility", text: "Book for a day, a week, or a specific trip.", icon: <Clock color="#f59e0b" /> }
+                       ].map((item, i) => (
+                         <Box key={i} sx={{ display: 'flex', gap: 2.5, alignItems: 'flex-start' }}>
+                            <Box sx={{ p: 1.5, bgcolor: 'rgba(255,255,255,0.05)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                              {item.icon}
+                            </Box>
+                            <Box>
+                               <Typography variant="h6" sx={{ color: 'white', fontWeight: 700 }}>{item.title}</Typography>
+                               <Typography sx={{ color: 'rgba(255,255,255,0.5)' }}>{item.text}</Typography>
+                            </Box>
+                         </Box>
+                       ))}
+                    </Box>
+                 </motion.div>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                 <motion.div
+                   initial={{ opacity: 0, scale: 0.9 }}
+                   whileInView={{ opacity: 1, scale: 1 }}
+                   viewport={{ once: true }}
+                   transition={{ duration: 1, ease: "easeOut" }}
+                   style={{ position: 'relative' }}
+                 >
+                    {/* Decorative Element */}
+                    <Box sx={{ 
+                      position: 'absolute', inset: '-20px', 
+                      background: 'linear-gradient(225deg, rgba(99, 102, 241, 0.2), transparent)', 
+                      filter: 'blur(40px)', zIndex: -1, borderRadius: '40px' 
+                    }} />
+                    
+                    <Box sx={{ 
+                      p: 4, bgcolor: 'rgba(30, 41, 59, 0.5)', 
+                      border: '1px solid rgba(255,255,255,0.1)', 
+                      borderRadius: '40px', backdropFilter: 'blur(20px)',
+                      display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 3
+                    }}>
+                       {[
+                         { label: "Vetted Drivers", value: "100%", color: '#10b981' },
+                         { label: "Active Users", value: "5k+", color: '#6366f1' },
+                         { label: "Successful Rides", value: "25k+", color: '#f59e0b' },
+                         { label: "Client Rating", value: "4.9/5", color: '#ec4899' }
+                       ].map((stat, i) => (
+                         <Box key={i} sx={{ p: 3, bgcolor: 'rgba(15, 23, 42, 0.5)', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <Typography sx={{ color: stat.color, fontWeight: 900, fontSize: '2rem' }}>{stat.value}</Typography>
+                            <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase' }}>{stat.label}</Typography>
+                         </Box>
+                       ))}
+                    </Box>
+                 </motion.div>
+              </Grid>
             </Grid>
          </Container>
       </Box>
 
-      {/* 3. CTA SECTION */}
-      <Box sx={{ py: 15 }}>
+      {/* 3. REGISTRATION GATEWAY */}
+      <Box sx={{ py: 15, bgcolor: 'rgba(255,255,255,0.02)' }}>
          <Container maxWidth="lg">
-            <motion.div
-               initial={{ opacity: 0, scale: 0.95 }}
-               whileInView={{ opacity: 1, scale: 1 }}
-               viewport={{ once: true }}
-               transition={{ duration: 0.6 }}
+            <Typography variant="h3" sx={{ color: 'white', fontWeight: 900, textAlign: 'center', mb: 8 }}>
+              Join the Community
+            </Typography>
+            <Grid container spacing={6}>
+               <Grid item xs={12} md={6}>
+                  <motion.div whileHover={{ y: -10 }} transition={{ duration: 0.4 }}>
+                     <Box 
+                       onClick={() => navigate('/user')}
+                       sx={{ 
+                         p: 6, borderRadius: '32px', cursor: 'pointer',
+                         background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(79, 70, 229, 0.05) 100%)',
+                         border: '2px solid rgba(79, 70, 229, 0.2)',
+                         '&:hover': { borderColor: 'rgba(79, 70, 229, 0.5)', boxShadow: '0 20px 40px rgba(79, 70, 229, 0.15)' },
+                         transition: 'all 0.4s'
+                       }}
+                     >
+                        <UserCircle2 size={48} color="#818cf8" />
+                        <Typography variant="h4" sx={{ color: 'white', fontWeight: 800, mt: 3, mb: 2 }}>Register as User</Typography>
+                        <Typography sx={{ color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, mb: 4 }}>
+                          Looking for a driver for your personal vehicle? Sign up now and access our pool of verified professionals.
+                        </Typography>
+                        <Button variant="text" endIcon={<ArrowRight />} sx={{ color: '#818cf8', fontWeight: 700 }}>Learn More</Button>
+                     </Box>
+                  </motion.div>
+               </Grid>
+               <Grid item xs={12} md={6}>
+                  <motion.div whileHover={{ y: -10 }} transition={{ duration: 0.4 }}>
+                     <Box 
+                       onClick={() => navigate('/driverReg')}
+                       sx={{ 
+                         p: 6, borderRadius: '32px', cursor: 'pointer',
+                         background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%)',
+                         border: '2px solid rgba(245, 158, 11, 0.2)',
+                         '&:hover': { borderColor: 'rgba(245, 158, 11, 0.5)', boxShadow: '0 20px 40px rgba(245, 158, 11, 0.15)' },
+                         transition: 'all 0.4s'
+                       }}
+                     >
+                        <Car size={48} color="#f59e0b" />
+                        <Typography variant="h4" sx={{ color: 'white', fontWeight: 800, mt: 3, mb: 2 }}>Register as Driver</Typography>
+                        <Typography sx={{ color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, mb: 4 }}>
+                          Professional driver? Join our network, get verified by admins, and start providing elite service to vehicle owners.
+                        </Typography>
+                        <Button variant="text" endIcon={<ArrowRight />} sx={{ color: '#f59e0b', fontWeight: 700 }}>Become a Partner</Button>
+                     </Box>
+                  </motion.div>
+               </Grid>
+            </Grid>
+         </Container>
+      </Box>
+
+      {/* 4. SUPPORT SECTION */}
+      <Box id="support" sx={{ py: 20, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+         <Container maxWidth="lg">
+            <Box 
+              sx={{ 
+                p: { xs: 5, md: 8 }, 
+                borderRadius: '40px', 
+                bgcolor: 'rgba(255,255,255,0.03)', 
+                border: '1px solid rgba(255,255,255,0.1)',
+                display: 'flex', flexDirection: { xs: 'column', md: 'row' },
+                alignItems: 'center', gap: 6
+              }}
             >
-               <Box 
-                 sx={{ 
-                   p: { xs: 5, md: 10 }, 
-                   borderRadius: '40px',
-                   textAlign: 'center',
-                   position: 'relative',
-                   overflow: 'hidden',
-                   background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)',
-                   border: '1px solid rgba(255,255,255,0.1)'
-                 }}
-               >
-                  <Typography variant="h3" sx={{ color: 'white', fontWeight: 800, mb: 3 }}>
-                    Ready to Start Your Journey?
+               <Box sx={{ flex: 1 }}>
+                  <Typography variant="h3" sx={{ color: 'white', fontWeight: 900, mb: 3 }}>How can we help?</Typography>
+                  <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '1.1rem', lineHeight: 1.8, mb: 4 }}>
+                    Our dedicated support team is available 24/7 to assist with your bookings, 
+                    technical issues, or driver verification status.
                   </Typography>
-                  <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.6)', mb: 6, maxWidth: '600px', mx: 'auto' }}>
-                    Join thousands of users who trust Sarathi for their daily 
-                    commute and special events.
-                  </Typography>
-                  <Box className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button 
-                      variant="contained" 
-                      onClick={() => navigate('/user')}
-                      sx={{ py: 2, px: 6, borderRadius: '14px', bgcolor: 'white', color: '#1e1b4b', fontWeight: 800, textTransform: 'none', '&:hover': { bgcolor: '#f1f5f9' } }}
-                    >
-                      Get Started Now
-                    </Button>
+                  <Box sx={{ display: 'flex', gap: 2 }}>
+                     <Button variant="contained" sx={{ bgcolor: 'white', color: '#0f172a', fontWeight: 700, borderRadius: '12px', textTransform: 'none', px: 4 }}>
+                       Contact Support
+                     </Button>
+                     <Button variant="outlined" sx={{ borderColor: 'rgba(255,255,255,0.2)', color: 'white', borderRadius: '12px', textTransform: 'none', px: 4 }}>
+                       FAQs
+                     </Button>
                   </Box>
                </Box>
-            </motion.div>
+               <Box sx={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 3 }}>
+                  {[
+                    { label: "Bookings", icon: <MapPin /> },
+                    { label: "Payments", icon: <Zap /> },
+                    { label: "Vetting", icon: <ShieldCheck /> },
+                    { label: "Safety", icon: <Star /> }
+                  ].map((topic, i) => (
+                    <Box key={i} sx={{ p: 4, bgcolor: 'rgba(15, 23, 42, 0.4)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '24px', textAlign: 'center', cursor: 'pointer', '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }}>
+                        <Box sx={{ color: '#818cf8', mb: 2 }}>{topic.icon}</Box>
+                        <Typography sx={{ color: 'white', fontWeight: 600 }}>{topic.label}</Typography>
+                    </Box>
+                  ))}
+               </Box>
+            </Box>
          </Container>
       </Box>
 

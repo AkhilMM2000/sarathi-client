@@ -105,7 +105,9 @@ const DualLogin= () => {
       } 
     } catch (error: any) {
       if (error.response && error.response.data) {
-        toast.error(error.response.data.error || "Login failed!");
+        // Prioritize message from backend if available
+        const errorMessage = error.response.data.message || error.response.data.error || "Login failed!";
+        toast.error(errorMessage);
       } else {
         toast.error("Something went wrong. Please try again.");
       }

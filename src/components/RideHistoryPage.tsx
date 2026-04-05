@@ -19,12 +19,12 @@ export const RideHistoryPage: React.FC<{ role: 'user' | 'driver'; userId: string
       setLoading(true);
       let res;
       if (role === 'user') {
-        res = await UserAPI.get(`/ridehistory?id=${userId}&page=${page}&limit=5`, {
-          params: { page, limit: 5 },
+        res = await UserAPI.get('/ridehistory', {
+          params: { id: userId, page, limit: 5 },
         });
       } else {
-        res = await DriverAPI.get(`/ridehistory?id=${userId}&page=${page}&limit=5`, {
-          params: { page, limit: 5 },
+        res = await DriverAPI.get('/ridehistory', {
+          params: { id: userId, page, limit: 5 },
         });
       }
 

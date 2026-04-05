@@ -132,8 +132,9 @@ const[walletAmount,setWalletAmount] = useState<number>(0)
 useEffect(() => {
   const fetchWalletAmount = async () => {
     try {
-      const response = await UserAPI.get(`/wallet/ballence`);
-      setWalletAmount(response.data.ballence);
+      const response = await UserAPI.get(`/wallet/balance`);
+    
+      setWalletAmount(response.data.balance);
     } catch (error) {
       console.error("Error fetching wallet amount:", error);
     }

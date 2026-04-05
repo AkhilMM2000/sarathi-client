@@ -30,6 +30,7 @@ const {driverID}=useParams()
 const [driverData, setDriverData] = useState<
   (DriverData & { distance: number }) | null
 >(null);
+console.log(driverData,'driver data get')
 const [isRangeMode, setIsRangeMode] = useState<boolean>(false);
   const [singleDate, setSingleDate] = useState<Dayjs | null>(null);
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
