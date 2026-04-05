@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError, InternalAxiosRequestConfig } from "axios";
 
 
@@ -57,7 +58,7 @@ const attachResponseInterceptor = (instance: AxiosInstance, tokenKey: TokenType)
       if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry){
         if ((error.response?.data as any)?.blocked) {
           console.warn("Blocked account detected. Redirecting to login...");
-          alert("Your account has been blocked. Please contact support.");
+          toast.error("Your account has been blocked. Please contact support.");
           localStorage.removeItem(tokenKey);
           redirectToLogin(tokenKey);
           return Promise.reject(error);
@@ -86,6 +87,10 @@ const attachResponseInterceptor = (instance: AxiosInstance, tokenKey: TokenType)
           return axios(originalRequest);
         } catch (refreshError) {
           console.error("Refresh token expired. Logging out...", refreshError);
+
+          // Get clear message if available from server
+          const errorMsg = (refreshError as any).response?.data?.message || "Session expired. Please login again.";
+          toast.error(errorMsg);
 
           localStorage.removeItem(tokenKey);
           redirectToLogin(tokenKey);

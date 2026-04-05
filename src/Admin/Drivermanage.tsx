@@ -42,7 +42,9 @@ import { AppDispatch, RootState } from "../store/ReduxStore";
 import { useDispatch, useSelector } from 'react-redux';
 import { setDriver,changeBlockStatus,updateDriver } from "../store/slices/adminDriverSlice"; 
 import { DriverBlockHandle, DriverStatusHandle, GetAllDriverAPi } from "../Api/driverService";
-import { toast,ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import EnhancedPagination from "../components/Adwancepagination";
+
 const DriverManagement: React.FC = () => {
   const [search, setSearch] = useState<string>("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
@@ -51,38 +53,46 @@ const DriverManagement: React.FC = () => {
 
   const [rejectionReason, setRejectionReason] = useState<string>("");
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
-  const [selectedDriverId, setSelectedDriverId] = useState<string >('');
-  const drivers=  useSelector((state: RootState) => state.AllDrivers.drivers);
+  const [selectedDriverId, setSelectedDriverId] = useState<string>('');
+  const drivers = useSelector((state: RootState) => state.AllDrivers.drivers);
   const [selectedStatus, setSelectedStatus] = useState<"pending" | "rejected" | "approved">("pending");
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
   const dispatch = useDispatch<AppDispatch>();
 
-  const openVerifyModal =(driverId: string,status:'rejected'|"approved"|"pending")=>{
+  const openVerifyModal = (driverId: string, status: 'rejected' | "approved" | "pending") => {
     setSelectedDriverId(driverId)
     setSelectedStatus(status)
     setIsVerifyModalOpen(true);
-   
   }
- 
-  
+
   const closeVerifyModal = () => setIsVerifyModalOpen(false);
-  
+
   const handleViewDocuments = (driver: DriverData) => {
     setSelectedDriver(driver);
     setOpenModal(true);
   };
-   const fetchDrivers = async () => {
+
+  const fetchDrivers = async (currentPage: number) => {
     try {
-      const driverData = await GetAllDriverAPi('admin');
-      dispatch(setDriver(driverData));
-     
+      const response = await GetAllDriverAPi('admin', currentPage, 10);
+      if (response.success) {
+        dispatch(setDriver(response.data));
+        setTotalPages(response.totalPages);
+      }
     } catch (error) {
-      console.error("Failed to fetch users", error);
-     
+      console.error("Failed to fetch drivers", error);
+      toast.error("Failed to fetch drivers data");
     }
   };
+
   useEffect(() => {
-      fetchDrivers(); 
-    }, []);
+    fetchDrivers(page);
+  }, [page]);
+
+  const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
     const handleBlockorUnblock = async ({ _id, isBlock }: Pick<DriverData, "_id" | "isBlock">) => {
       try {
         // Call API to update block status
@@ -281,8 +291,19 @@ const DriverManagement: React.FC = () => {
       ))}
     </TableBody>
   </Table>
-</TableContainer>
-{/* driver status change modal */}
+      </TableContainer>
+
+      {/* Pagination component */}
+      <Box display="flex" justifyContent="center" mt={4} mb={2}>
+        <EnhancedPagination
+          count={totalPages}
+          page={page}
+          onChange={handlePageChange}
+          color="primary"
+        />
+      </Box>
+
+      {/* driver status change modal */}
 <Dialog 
   open={isVerifyModalOpen} 
   onClose={closeVerifyModal}

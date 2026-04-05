@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pagination as MuiPagination } from '@mui/material';
+import { Pagination as MuiPagination, SxProps, Theme } from '@mui/material';
 import { motion } from 'framer-motion';
 
 interface EnhancedPaginationProps {
@@ -8,6 +8,7 @@ interface EnhancedPaginationProps {
   onChange: (event: React.ChangeEvent<unknown>, value: number) => void;
   color?: 'primary' | 'secondary' | 'standard';
   size?: 'small' | 'medium' | 'large';
+  sx?: SxProps<Theme>;
 }
 
 const EnhancedPagination: React.FC<EnhancedPaginationProps> = ({
@@ -15,7 +16,8 @@ const EnhancedPagination: React.FC<EnhancedPaginationProps> = ({
   page,
   onChange,
   color = 'primary',
-  size = 'medium'
+  size = 'medium',
+  sx
 }) => {
   const [clickedPage, setClickedPage] = useState<number | null>(null);
   
@@ -43,27 +45,30 @@ const EnhancedPagination: React.FC<EnhancedPaginationProps> = ({
               root: "pagination-root",
               ul: "pagination-ul flex items-center"
             }}
-            sx={{
-              '& .MuiPaginationItem-root': {
-                margin: '0 2px',
-                borderRadius: '50%',
-                fontWeight: 500,
-                transition: 'all 0.2s ease',
-                '&:hover': {
-                  backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                  transform: 'scale(1.1)',
+            sx={[
+              {
+                '& .MuiPaginationItem-root': {
+                  margin: '0 2px',
+                  borderRadius: '50%',
+                  fontWeight: 500,
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                    transform: 'scale(1.1)',
+                  }
+                },
+                '& .Mui-selected': {
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  boxShadow: '0 4px 6px -1px rgba(99, 102, 241, 0.4)',
+                  '&:hover': {
+                    backgroundColor: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
+                  }
                 }
               },
-              '& .Mui-selected': {
-                background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
-                color: 'white',
-                fontWeight: 'bold',
-                boxShadow: '0 4px 6px -1px rgba(99, 102, 241, 0.4)',
-                '&:hover': {
-                  backgroundColor: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
-                }
-              }
-            }}
+              ...(Array.isArray(sx) ? sx : [sx])
+            ]}
           />
         </div>
         

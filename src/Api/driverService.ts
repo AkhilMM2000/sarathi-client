@@ -24,17 +24,17 @@ export const handleDriverData = async (
   }
 };
 
-export const GetAllDriverAPi = async (role: UserRole) => {
+export const GetAllDriverAPi = async (role: UserRole, page: number = 1, limit: number = 10) => {
   try {
-
     const apiInstance = getApiInstance(role);
-const response=await apiInstance.get('/driver')
-return response.data
+    const response = await apiInstance.get('/driver', {
+      params: { page, limit }
+    });
+    return response.data;
   } catch (error) {
     console.error(`Error handling driver data for ${role}:`, error);
     throw error;
   }
-
 };
 
 export const DriverBlockHandle = async (role: UserRole, { _id, isBlock }: Pick<DriverData, "_id" | "isBlock">) => {
