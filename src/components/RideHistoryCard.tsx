@@ -3,9 +3,7 @@ import { RideHistory } from '../constant/types';
 import moment from 'moment';
 import { 
   MapPin, 
-  MapPinOff, 
   ChevronRight, 
-  DollarSign, 
   Calendar, 
   Navigation, 
   CreditCard,

@@ -13,7 +13,6 @@ import {
   Alert,
   Container,
   alpha,
-  useTheme,
   Tooltip,
   Card,
   CardContent,
@@ -104,7 +103,7 @@ const DriverBookings: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
-  const theme = useTheme();
+
 
   // --- Theme Colors ---
   const colors = {
@@ -138,7 +137,7 @@ const DriverBookings: React.FC = () => {
   }, [page, refresh]);
 
   const authdriver = useSelector((state: RootState) => state.driverStore.driver);
-  const { initiateCall, calling, setCallAlert } = useCallRequest();
+  const { initiateCall, calling } = useCallRequest();
 
   const handleCall = (fromId: string, toId: string, callerName: string, role: "user" | "driver") => {
     initiateCall({ fromId, toId, callerName, role });

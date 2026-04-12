@@ -6,7 +6,9 @@ let socket: Socket;
 export const CreatesocketConnection = (): Socket => {
   
   if (!socket) {
-    socket = io(BaseUrl);
+    socket = io(BaseUrl, {
+      withCredentials: true,
+    });
   }
   return socket;
 };

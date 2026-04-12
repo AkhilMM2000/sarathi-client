@@ -3,9 +3,7 @@ import {
   Container, 
   Typography, 
   Button, 
-  Grid, 
-  useTheme,
-  useMediaQuery 
+  Grid
 } from "@mui/material";
 import { 
   ShieldCheck, 
@@ -23,7 +21,7 @@ import Footer from "./Footer";
 
 const Home = () => {
   const navigate = useNavigate();
-  const theme = useTheme();
+
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 500], [0, 200]);
 

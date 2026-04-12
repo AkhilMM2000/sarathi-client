@@ -16,8 +16,7 @@ import {
   ShieldCheck, 
   RefreshCcw, 
   ArrowLeft,
-  CheckCircle2,
-  AlertCircle
+  CheckCircle2
 } from "lucide-react";
 
 import ApiService from '../Api/ApiService';

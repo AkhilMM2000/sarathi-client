@@ -16,13 +16,12 @@ import {
   Car, 
   User, 
   Menu as MenuIcon, 
-  ChevronDown,
   Phone,
   Info,
   Home as HomeIcon
 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 interface Props {
   children: React.ReactElement;
@@ -42,7 +41,7 @@ function HideOnScroll(props: Props) {
 
 const Header = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileAnchor, setMobileAnchor] = useState<null | HTMLElement>(null);
 
@@ -55,10 +54,7 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleNavigation = (path: string) => {
-    navigate(path);
-    setMobileAnchor(null);
-  };
+
 
   const navItems = [
     { label: "Home", id: "home", icon: <HomeIcon size={18} /> },

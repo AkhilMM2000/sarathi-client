@@ -5,11 +5,8 @@ import {
   Typography,
   Button,
   TextField,
-  InputAdornment,
   LinearProgress,
   IconButton,
-  Tooltip,
-  Paper
 } from "@mui/material";
 import {
   UploadCloud,
@@ -18,11 +15,7 @@ import {
   FileText,
   X,
   ShieldCheck,
-  AlertCircle,
-  CheckCircle2,
-  Camera,
-  ChevronRight,
-  ShieldIcon
+  Camera
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast, ToastContainer } from "react-toastify";
@@ -46,7 +39,7 @@ export default function DocumentsVerify() {
     licensePreview: null as string | null,
   });
 
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
 
   const isFormValid = useMemo(() => {
     return (
@@ -78,12 +71,6 @@ export default function DocumentsVerify() {
       [`${type}File`]: file,
       [`${type}Preview`]: preview
     }));
-
-    setErrors(prev => {
-      const newErrs = { ...prev };
-      delete newErrs[type];
-      return newErrs;
-    });
   };
 
   const removeFile = (type: 'aadhaar' | 'license') => {
@@ -231,7 +218,7 @@ export default function DocumentsVerify() {
                   file={form.aadhaarFile}
                   preview={form.aadhaarPreview}
                   progress={uploadProgress.aadhaar}
-                  onFileSelect={(e: React.ChangeEvent<HTMLInputElement>, type: 'aadhaar' | 'license') => handleFileChange(e, 'aadhaar')}
+                  onFileSelect={(e: React.ChangeEvent<HTMLInputElement>) => handleFileChange(e, 'aadhaar')}
                   onRemove={() => removeFile('aadhaar')}
                   label="Aadhaar Card (Front/Back)"
                 />
@@ -254,8 +241,7 @@ export default function DocumentsVerify() {
                   file={form.licenseFile}
                   preview={form.licensePreview}
                   progress={uploadProgress.license}
-                  onFileSelect={(e: React.ChangeEvent<HTMLInputElement>,
-  type: 'aadhaar' | 'license') => handleFileChange(e, 'license')}
+                  onFileSelect={(e: React.ChangeEvent<HTMLInputElement>) => handleFileChange(e, 'license')}
                   onRemove={() => removeFile('license')}
                   label="Driving License Copy"
                 />
@@ -415,7 +401,7 @@ const fieldStyle = {
   "& .MuiInputBase-input::placeholder": { color: "rgba(255, 255, 255, 0.3)", opacity: 1 },
 };
 
-const CircularProgress = ({ size, color, sx }: any) => (
+const CircularProgress = ({ size, sx }: any) => (
   <Box sx={{ display: 'inline-flex', ...sx }}>
     <Box
       sx={{
