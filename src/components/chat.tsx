@@ -145,7 +145,7 @@ const openPop = Boolean(anchorEl);
       try {
     if(senderType=='user'){ 
         const response = await UserAPI.get(`/chat/${roomId}`);
-        console.log(response.data,'your chat reach here');
+      
         setMessages(response.data.chat || []);
     }else if(senderType=='driver'){
         const response = await DriverAPI.get(`/chat/${roomId}`); 
