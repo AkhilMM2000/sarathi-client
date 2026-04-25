@@ -148,7 +148,7 @@ console.log('endate',endDate?.toDate())
       console.error("Error booking driver:", error);
     setSnackbar({
       open: true,
-      message: error.response?.data?.error || "Failed to book driver",
+      message: error.response?.data?.message || "Failed to book driver",
       severity: "error",
     });
     }
