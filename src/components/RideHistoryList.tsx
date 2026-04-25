@@ -3,7 +3,7 @@ import React from 'react';
 import {  Typography, Box } from '@mui/material';
 import { RideCard } from './RideHistoryCard';
 import { RideHistory } from '../constant/types';
-import EnhancedPagination from './Adwancepagination';
+import EnhancedPagination from './common/Adwancepagination';
 interface RideListProps {
   rides: RideHistory[];
   role: 'user' | 'driver';

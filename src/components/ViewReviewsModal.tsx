@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import Rating from "@mui/material/Rating";
 import { DriverAPI, UserAPI} from "../Api/AxiosInterceptor";
-import EnhancedPagination from "./Adwancepagination"; // your custom pagination component
+import EnhancedPagination from "./common/Adwancepagination"; // your custom pagination component
 import moment from "moment";
 
 interface ViewReviewsModalProps {

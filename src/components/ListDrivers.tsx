@@ -21,7 +21,7 @@ import { Link } from "react-router-dom";
 import { GetDriverswithDistance } from "../Api/driverService";
 import { DriverData } from "../constant/types";
 import { useDebounce } from "../hooks/useDebounce";
-import EnhancedPagination from "./Adwancepagination";
+import EnhancedPagination from "./common/Adwancepagination";
   type DriverWithDistance = DriverData & { distance: number };
 const DriverList = () => {
   const [page, setPage] = useState<number>(1);

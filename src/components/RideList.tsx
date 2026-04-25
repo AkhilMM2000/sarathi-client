@@ -1,7 +1,7 @@
 import React from 'react';
 import { RideCard } from './RideHistoryCard';
 import { RideHistory } from '../constant/types';
-import EnhancedPagination from './Adwancepagination';
+import EnhancedPagination from './common/Adwancepagination'; 
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface RideListProps {
