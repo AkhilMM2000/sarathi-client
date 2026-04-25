@@ -24,8 +24,8 @@ import VideoCallPage from "../components/VideoCall";
 import { RideHistoryPage } from "../components/RideHistoryPage";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/ReduxStore";
-import PdfFilePreview from "../components/previewpdf";
-import NotFound from "../components/NotFound";
+import PdfFilePreview from "../components/common/previewpdf";
+import NotFound from "../components/common/NotFound";
 const AppRoutes = () => {
  const Currentuser = useSelector((state: RootState) => state.authUser.user);
 

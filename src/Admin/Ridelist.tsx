@@ -17,7 +17,7 @@ import {
 import { Eye, Car } from "lucide-react";
 import moment from "moment";
 import { AdminAPI } from "../Api/AxiosInterceptor";
-import EnhancedPagination from "../components/Adwancepagination";
+import EnhancedPagination from "../components/common/Adwancepagination";
 import RideDetailsModal from "../components/BookingData";
 
 interface Booking {

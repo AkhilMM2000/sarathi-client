@@ -36,7 +36,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import PaymentIcon from '@mui/icons-material/Payment';
 import VerifiedIcon from '@mui/icons-material/CreditScore'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import EnhancedAlerts from "../components/Alert";
+import EnhancedAlerts from "../components/common/Alert";
 import { CreatesocketConnection } from "../constant/socket";
 const DriverDashboard: React.FC = () => {
 

@@ -43,7 +43,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setDriver,changeBlockStatus,updateDriver } from "../store/slices/adminDriverSlice"; 
 import { DriverBlockHandle, DriverStatusHandle, GetAllDriverAPi } from "../Api/driverService";
 import { toast, ToastContainer } from "react-toastify";
-import EnhancedPagination from "../components/Adwancepagination";
+import EnhancedPagination from "../components/common/Adwancepagination";
 
 const DriverManagement: React.FC = () => {
   const [search, setSearch] = useState<string>("");

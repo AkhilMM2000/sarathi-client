@@ -21,7 +21,7 @@ import {
   History as HistoryIcon 
 } from '@mui/icons-material';
 import Wallet, { Transaction } from '../components/Wallet';
-import EnhancedPagination from '../components/Adwancepagination';
+import EnhancedPagination from '../components/common/Adwancepagination';
 import { UserAPI } from '../Api/AxiosInterceptor';
 
 // Styled components

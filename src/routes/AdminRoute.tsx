@@ -4,7 +4,7 @@ import AdminSidebar from "../Admin/AdminLayout";
 import UserManagement from "../Admin/Usermanage";
 import DriverManagement from "../Admin/Drivermanage";
 import Ridelist from "../Admin/Ridelist";
-import NotFound from "../components/NotFound";
+import NotFound from "../components/common/NotFound";
 import AdminDashboard from "../Admin/AdminDashboard";
 
 const AdminRoute = () => {

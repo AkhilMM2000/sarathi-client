@@ -35,11 +35,11 @@ import moment from "moment";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/ReduxStore";
 import { DriverAPI } from "../Api/AxiosInterceptor";
-import EnhancedPagination from "../components/Adwancepagination";
+import EnhancedPagination from "../components/common/Adwancepagination";
 import ChatModal from "../components/chat";
 import { CreatesocketConnection } from "../constant/socket";
 import { useCallRequest } from "../hooks/useCallRequest";
-import EnhancedAlerts from "../components/Alert";
+import EnhancedAlerts from "../components/common/Alert";
 
 // --- Types ---
 interface User {

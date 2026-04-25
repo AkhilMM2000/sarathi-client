@@ -11,7 +11,7 @@ import VideoCallPage from "../components/VideoCall";
 import { RideHistoryPage } from "../components/RideHistoryPage";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/ReduxStore";
-import NotFound from "../components/NotFound";
+import NotFound from "../components/common/NotFound";
 import DriverStatusDashboard from "../driver/DriverDashboard";
 
 

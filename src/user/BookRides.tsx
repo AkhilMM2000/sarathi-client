@@ -20,10 +20,10 @@ import { UserAPI } from "../Api/AxiosInterceptor";
 import PaymentForm from "../components/Paymentform"; // Adjust the path if needed
 import { Elements } from "@stripe/react-stripe-js";
 import { stripePromise } from "../context/StripeProvider";
-import EnhancedPagination from "../components/Adwancepagination";
+import EnhancedPagination from "../components/common/Adwancepagination";
 import moment from "moment";
 import CancelBookingModal from "../components/CancelBooking";
-import EnhancedAlerts from "../components/Alert";
+import EnhancedAlerts from "../components/common/Alert";
 import ChatIcon from '@mui/icons-material/Chat';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
