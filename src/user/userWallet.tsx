@@ -69,9 +69,9 @@ const UserWallet: React.FC = () => {
 
     try {
       const res = await UserAPI.get(`/wallet?page=${page}&limit=4`);
-      setTransactions(res.data.transactionHistory.transactions);
+      setTransactions(res.data.transactions);
       setWalletBalance(res.data.ballence);
-      setTotalPages(res.data.transactionHistory.total);
+      setTotalPages(res.data.total);
     } catch (error: any) {
       console.error("Error fetching transactions:", error.response?.data?.message || error.message);
       setError(error.response?.data?.message || "Failed to load wallet data. Please try again.");
