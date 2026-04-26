@@ -28,6 +28,10 @@ console.log(role);
       );
       console.log(res);
       
+      if (res.status === 200 && res.data.accessToken) {
+        localStorage.setItem("accessToken", res.data.accessToken);
+      }
+      
       if (res.status === 403) {
         toast.error(res.data.message); // Show toast message and stay on the same page
         return;

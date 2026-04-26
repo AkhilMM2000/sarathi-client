@@ -1,15 +1,12 @@
 import { toast } from "react-toastify";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError, InternalAxiosRequestConfig } from "axios";
 
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL 
-
-type TokenType ="user_accessToken" | "driver_accessToken" | "admin_accessToken";
-
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const TOKEN_KEY = "accessToken";
 
 export const UserAPI: AxiosInstance = axios.create({
   baseURL: `${BASE_URL}/users`,
-  withCredentials: true, 
+  withCredentials: true,
 });
 
 export const DriverAPI: AxiosInstance = axios.create({
@@ -22,10 +19,16 @@ export const AdminAPI: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
-const attachToken = (instance: AxiosInstance, tokenKey: TokenType) => {
+/**
+ * Sets up both Request and Response interceptors for a given Axios instance.
+ * @param instance The Axios instance (User, Driver, or Admin)
+ * @param loginPath The redirect path if authentication fails
+ */
+const setupInterceptors = (instance: AxiosInstance, loginPath: string) => {
+  // 1. Request Interceptor: Attach Unified Token
   instance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-      const token = localStorage.getItem(tokenKey);
+      const token = localStorage.getItem(TOKEN_KEY);
       if (token && config.headers) {
         config.headers["Authorization"] = `Bearer ${token}`;
       }
@@ -33,68 +36,49 @@ const attachToken = (instance: AxiosInstance, tokenKey: TokenType) => {
     },
     (error: AxiosError) => Promise.reject(error)
   );
-};
 
-attachToken(UserAPI, "user_accessToken");
-attachToken(DriverAPI, "driver_accessToken");
-attachToken(AdminAPI, "admin_accessToken");
-
-const redirectToLogin = (tokenKey: TokenType) => {
-  const loginRoutes: Record<TokenType, string> = {
-    user_accessToken: "/login?type=user",
-    driver_accessToken: "/login?type=driver",
-    admin_accessToken: "/admin",
-  };
-  window.location.href = loginRoutes[tokenKey];
-};
-
-
-const attachResponseInterceptor = (instance: AxiosInstance, tokenKey: TokenType) => {
+  // 2. Response Interceptor: Handle Refresh & Redirects
   instance.interceptors.response.use(
-    (response: AxiosResponse) => response, 
+    (response: AxiosResponse) => response,
     async (error: AxiosError) => {
       const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
-      if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry){
+      // Handle 401 (Unauthorized) or 403 (Forbidden)
+      if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
+        
+        // Handle blocked accounts immediately
         if ((error.response?.data as any)?.blocked) {
-          console.warn("Blocked account detected. Redirecting to login...");
           toast.error("Your account has been blocked. Please contact support.");
-          localStorage.removeItem(tokenKey);
-          redirectToLogin(tokenKey);
+          localStorage.removeItem(TOKEN_KEY);
+          window.location.href = loginPath;
           return Promise.reject(error);
         }
-        originalRequest._retry = true; // Prevent infinite loop
-  
+
+        originalRequest._retry = true;
+
         try {
-          const role = tokenKey === "user_accessToken" ? "user" 
-          : tokenKey === "driver_accessToken" ? "driver" 
-          : "admin";
+          // Unified Refresh: No body needed, backend uses unified refresh_token cookie
           const res = await axios.post<{ accessToken: string }>(
-            `${BASE_URL}/auth/refresh-token`, 
-            {role},  
-            { withCredentials: true } 
+            `${BASE_URL}/auth/refresh-token`,
+            {},
+            { withCredentials: true }
           );
-        
-          
+
           const newAccessToken = res.data.accessToken;
+          localStorage.setItem(TOKEN_KEY, newAccessToken);
 
-          localStorage.setItem(tokenKey, newAccessToken);
-
-       
+          // Retry the original request with the new token
           if (originalRequest.headers) {
             originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
           }
           return axios(originalRequest);
         } catch (refreshError) {
-          console.error("Refresh token expired. Logging out...", refreshError);
-
-          // Get clear message if available from server
-          const errorMsg = (refreshError as any).response?.data?.message || "Session expired. Please login again.";
-          toast.error(errorMsg);
-
-          localStorage.removeItem(tokenKey);
-          redirectToLogin(tokenKey);
-
+          console.error("Session expired. Redirecting to login...", refreshError);
+          
+          toast.error("Session expired. Please login again.");
+          localStorage.removeItem(TOKEN_KEY);
+          window.location.href = loginPath;
+          
           return Promise.reject(refreshError);
         }
       }
@@ -104,7 +88,7 @@ const attachResponseInterceptor = (instance: AxiosInstance, tokenKey: TokenType)
   );
 };
 
-
-attachResponseInterceptor(UserAPI, "user_accessToken");
-attachResponseInterceptor(DriverAPI, "driver_accessToken");
-attachResponseInterceptor(AdminAPI, "admin_accessToken");
+// Standardize all APIs with their respective login/redirect paths
+setupInterceptors(UserAPI, "/login?type=user");
+setupInterceptors(DriverAPI, "/login?type=driver");
+setupInterceptors(AdminAPI, "/admin");

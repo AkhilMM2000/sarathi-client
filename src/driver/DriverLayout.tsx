@@ -173,7 +173,7 @@ setMessage(`📢 New booking received from ${formattedDate}`);
 
   const handleClick = async () => {
     try {
-        const message = await ApiService.handleLogout("driver");
+        const message = await ApiService.handleLogout();
         toast.success(message);
         setTimeout(() => {
           navigate(`/login?type=driver`);

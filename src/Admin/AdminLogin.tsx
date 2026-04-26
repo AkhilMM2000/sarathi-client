@@ -49,7 +49,7 @@ const SarathiAdminLogin = () => {
       const response = await ApiService.Login(credentials, 'admin');
   
       if (response?.accessToken && response?.role === 'admin') {
-        localStorage.setItem(`${response.role}_accessToken`, response.accessToken);
+        localStorage.setItem(`accessToken`, response.accessToken);
         toast.success("Identity Verified. Access Granted.", { 
           autoClose: 1500,
           theme: "colored"

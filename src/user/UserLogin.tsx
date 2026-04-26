@@ -92,7 +92,7 @@ const DualLogin= () => {
   
       if (response?.accessToken) {
         // Store tokens and role
-        localStorage.setItem(`${response.role}_accessToken`, response.accessToken);
+        localStorage.setItem(`accessToken`, response.accessToken);
         
         toast.success("Login successful!");
   

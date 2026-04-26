@@ -42,7 +42,7 @@ const NavBar = () => {
   };
    const handleClick = async () => {
       try {
-          const message = await ApiService.handleLogout("user");
+          const message = await ApiService.handleLogout();
           toast.success(message);
           setTimeout(() => {
             navigate(`/login?type=user`);

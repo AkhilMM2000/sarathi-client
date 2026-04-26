@@ -49,7 +49,7 @@ const AdminSidebar = () => {
   };
   const handleClick = async () => {
     try {
-        const message = await ApiService.handleLogout("admin");
+        const message = await ApiService.handleLogout();
         toast.success(message);
         setTimeout(() => {
           navigate(`/admin`);

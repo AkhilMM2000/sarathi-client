@@ -89,7 +89,7 @@ const OTPVerification = () => {
             navigate("/login?type=driver");
           } else {
             localStorage.removeItem("email");
-            localStorage.setItem(`user_accessToken`, response.accessToken);
+            localStorage.setItem(`accessToken`, response.accessToken);
             toast.success("Welcome! Registration successful.", {
               position: "top-center",
               theme: "dark"

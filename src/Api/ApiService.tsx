@@ -1,7 +1,6 @@
 import axios from "axios";
 import { AdminAPI, DriverAPI, UserAPI } from "./AxiosInterceptor";
 
-
 class ApiService {
   private baseUrl: string;
 
@@ -14,19 +13,21 @@ class ApiService {
       const response = await axios.post(`${this.baseUrl}/${type}/register`, userData);
       return response.data;
     } catch (error: any) {
-      // Improve client-side reporting of 500 errors
       throw error.response?.data?.message || error.response?.data?.error || "Registration failed";
     }
   }
   
-  async verifyOtp(otp: string, email: string,type: "users" | "drivers") {
+  async verifyOtp(otp: string, email: string, type: "users" | "drivers") {
     try {
-      const response = await axios.post(`${this.baseUrl}/${type}/verify-otp`, { otp, email,role:type },{withCredentials:true});
+      const response = await axios.post(`${this.baseUrl}/${type}/verify-otp`, { 
+        otp, 
+        email,
+        role: type === "drivers" ? "driver" : "user" 
+      }, { withCredentials: true });
       return response.data;
     } catch (error: any) {
       throw error; 
     }
-
   }
 
   async resendOTP(email: string, role: string) {
@@ -52,7 +53,7 @@ class ApiService {
       );
 
       if (response.status === 200) {
-        return response.data.secure_url; // Return the uploaded image URL
+        return response.data.secure_url;
       }
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -104,58 +105,51 @@ class ApiService {
     }
   }
   
-   async chatSignedUrls(role: "driver" | "user",fileType: string) {
+  async chatSignedUrls(role: "driver" | "user", fileType: string) {
     try {
-      const api=role=='user'?UserAPI:DriverAPI
-      const response = await api.post('/chat/signature',{fileType})
-        
-      
+      const api = role === 'user' ? UserAPI : DriverAPI;
+      const response = await api.post('/chat/signature', { fileType });
       return response.data;
     } catch (error: any) {
       throw error.response?.data?.message || "Failed to get signed URL";
     }
   }
 
-async uploadFileInChat(file: File, signedData: any): Promise<string> {
-  try {
-    console.log(signedData,'signature')
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("api_key", import.meta.env.VITE_CLOUDINARY_API_KEY);
-    formData.append("timestamp", signedData.timestamp.toString());
-    formData.append("signature", signedData.signature);
-    formData.append("public_id", signedData.public_id);
-    formData.append("folder", signedData.folder); // already provided
-    formData.append('upload_preset', signedData.upload_preset
-);
-
-    // ✅ Use resource_type as per backend decision
-    const resourceType = signedData.folder === "images" ? "image" : "raw";
-
-    const response = await axios.post(
-      `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`,
-      formData
-    );
-
-    if (response.status === 200) {
-      console.log(response.data, 'Upload successful');
-      return response.data.secure_url;
-    }
-
-    throw new Error("File upload failed");
-  } catch (error: any) {
-   
-    throw error.response?.data?.message || "File upload failed";
-  }
-}
-
-  async Login(formData: Record<string, any>, type: "users" | "drivers"|"admin") {
+  async uploadFileInChat(file: File, signedData: any): Promise<string> {
     try {
-      const payload = { ...formData,    role: type === "drivers" ? "driver" : type === "admin" ? "admin" : "user"  }; // Add role dynamically
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("api_key", import.meta.env.VITE_CLOUDINARY_API_KEY);
+      formData.append("timestamp", signedData.timestamp.toString());
+      formData.append("signature", signedData.signature);
+      formData.append("public_id", signedData.public_id);
+      formData.append("folder", signedData.folder);
+      formData.append('upload_preset', signedData.upload_preset);
+
+      const resourceType = signedData.folder === "images" ? "image" : "raw";
+
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`,
+        formData
+      );
+
+      if (response.status === 200) {
+        return response.data.secure_url;
+      }
+
+      throw new Error("File upload failed");
+    } catch (error: any) {
+      throw error.response?.data?.message || "File upload failed";
+    }
+  }
+
+  async Login(formData: Record<string, any>, type: "users" | "drivers" | "admin") {
+    try {
+      const role = type === "drivers" ? "driver" : type === "admin" ? "admin" : "user";
+      const payload = { ...formData, role };
 
       const response = await axios.post(`${this.baseUrl}/${type}/login`, payload, {
-        withCredentials:true,
-      
+        withCredentials: true,
       });
       return response.data;
     } catch (error: any) {
@@ -163,26 +157,24 @@ async uploadFileInChat(file: File, signedData: any): Promise<string> {
     }
   }
   
-  handleLogout = async (role: "driver" | "user" | "admin") => {
+  handleLogout = async () => {
     try {
-        const response = await axios.post(`${this.baseUrl}/auth/logout`, {}, { 
-          params: { role }, 
-          withCredentials: true 
+      const response = await axios.post(`${this.baseUrl}/auth/logout`, {}, { 
+        withCredentials: true 
       });
       
-     
-        localStorage.removeItem(`${role}_accessToken`);
+      // Standardized Unified Key
+      localStorage.removeItem("accessToken");
 
-        return response.data.message; // Return the success message from the backend
-    } catch (error:unknown) {
-        console.error("Logout failed:", error);
-        if (axios.isAxiosError(error)) {
-          throw new Error(error.response?.data?.message || "Logout failed");
+      return response.data.message;
+    } catch (error: unknown) {
+      console.error("Logout failed:", error);
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || "Logout failed");
       }
       throw new Error("An unknown error occurred");
     }
-
- }
+  }
 
   async getAdminDashboardStats() {
     try {
@@ -192,7 +184,6 @@ async uploadFileInChat(file: File, signedData: any): Promise<string> {
       throw error.response?.data?.message || "Failed to fetch dashboard stats";
     }
   }
-
 }
 
 export default new ApiService(); 
