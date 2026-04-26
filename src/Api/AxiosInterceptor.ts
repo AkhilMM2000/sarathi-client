@@ -43,10 +43,9 @@ const setupInterceptors = (instance: AxiosInstance, loginPath: string) => {
     async (error: AxiosError) => {
       const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
-      // Handle 401 (Unauthorized) or 403 (Forbidden)
-      if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
-        
-        // Handle blocked accounts immediately
+      // Handle 403 (Forbidden) - Permission Issues
+      if (error.response?.status === 403) {
+        // 1. Handle blocked accounts immediately
         if ((error.response?.data as any)?.blocked) {
           toast.error("Your account has been blocked. Please contact support.");
           localStorage.removeItem(TOKEN_KEY);
@@ -54,6 +53,14 @@ const setupInterceptors = (instance: AxiosInstance, loginPath: string) => {
           return Promise.reject(error);
         }
 
+        // 2. Handle generic permission errors (Wrong Role)
+        toast.error("You are not authorized to access this resource.");
+        window.location.href = "/";
+        return Promise.reject(error);
+      }
+
+      // Handle 401 (Unauthorized) - Token Expired
+      if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
 
         try {
