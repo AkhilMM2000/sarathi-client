@@ -19,7 +19,12 @@ import {
   Alert,
   Button,
   Rating,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
+import { DriverAPI } from '../Api/AxiosInterceptor';
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
@@ -73,6 +78,36 @@ const [callModalOpen, setCallModalOpen] = useState<boolean>(false);
   const [callerInfo, setCallerInfo] = useState<CallerInfo | null>(null);
  
 const { playRingtone, stopRingtone } = useRingtone('/sounds/ringtone.mp3');
+  
+  // Broadcast request states
+  const [broadcastRequest, setBroadcastRequest] = useState<{
+    bookingId: string;
+    fromLocation: string;
+    toLocation: string;
+    estimatedFare: number;
+    startDate: string;
+  } | null>(null);
+  const [openBroadcastModal, setOpenBroadcastModal] = useState<boolean>(false);
+
+  const handleAcceptBroadcast = async () => {
+    if (!broadcastRequest) return;
+    try {
+      const response = await DriverAPI.patch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/booking/accept/${broadcastRequest.bookingId}`
+      );
+      if (response.data.success) {
+        toast.success("Ride accepted successfully!");
+        setOpenBroadcastModal(false);
+        setBroadcastRequest(null);
+        navigate("/driver/rides");
+      }
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || "Failed to accept booking";
+      toast.error(msg);
+      setOpenBroadcastModal(false);
+      setBroadcastRequest(null);
+    }
+  };
   
 
 useEffect(()=>{
@@ -139,11 +174,19 @@ useEffect(()=>{
       socket.emit('driver:online', driverId); 
     }
   
-    socket.on('booking:new', ({startDate}) => {
-      const formattedDate = moment(startDate).format("MMMM D, dddd");
-setMessage(`📢 New booking received from ${formattedDate}`);
-      
-      setOpen(true);
+    socket.on('booking:new', (data) => {
+      setBroadcastRequest(data);
+      setOpenBroadcastModal(true);
+    });
+  
+    socket.on('booking:assigned', ({ bookingId }) => {
+      setBroadcastRequest((prev) => {
+        if (prev && prev.bookingId === bookingId) {
+          setOpenBroadcastModal(false);
+          return null;
+        }
+        return prev;
+      });
     });
   
   socket.on('cancel:booking',({reason,startDate})=>{
@@ -162,10 +205,10 @@ setMessage(`📢 New booking received from ${formattedDate}`);
  })
 
     return () => {
-   socket.off('cancel:booking')
+      socket.off('cancel:booking')
       socket.off('booking:new')
+      socket.off('booking:assigned')
       socket.off('payment:status')
-      
     };
   }, [driverId]);
   
@@ -449,6 +492,101 @@ setMessage(`📢 New booking received from ${formattedDate}`);
   onAccept={handleAccept}
   onReject={handleReject}
       />
+
+      {/* Broadcast Ride Request Modal */}
+      <Dialog
+        open={openBroadcastModal}
+        onClose={() => setOpenBroadcastModal(false)}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            overflow: "hidden",
+            boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+          color: "white", 
+          py: 2.5,
+          px: 3,
+          display: "flex", 
+          alignItems: "center", 
+          gap: 1.5 
+        }}>
+          <DirectionsCarIcon sx={{ color: "#38bdf8" }} />
+          <Typography variant="h6" fontWeight="bold">New Ride Request!</Typography>
+        </DialogTitle>
+        <DialogContent sx={{ py: 3, px: 3 }}>
+          {broadcastRequest && (
+            <Box>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="caption" color="text.secondary" fontWeight="bold">PICKUP LOCATION</Typography>
+                <Typography variant="body1" fontWeight="medium" color="text.primary" sx={{ mt: 0.5 }}>
+                  {broadcastRequest.fromLocation}
+                </Typography>
+              </Box>
+              
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="caption" color="text.secondary" fontWeight="bold">DESTINATION</Typography>
+                <Typography variant="body1" fontWeight="medium" color="text.primary" sx={{ mt: 0.5 }}>
+                  {broadcastRequest.toLocation}
+                </Typography>
+              </Box>
+
+              <Divider sx={{ my: 2 }} />
+
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <Box>
+                  <Typography variant="caption" color="text.secondary" fontWeight="bold">DATE & TIME</Typography>
+                  <Typography variant="body2" fontWeight="semibold" color="text.primary" sx={{ mt: 0.5 }}>
+                    {moment(broadcastRequest.startDate).format("MMM D, YYYY h:mm A")}
+                  </Typography>
+                </Box>
+                <Box sx={{ textAlign: "right" }}>
+                  <Typography variant="caption" color="text.secondary" fontWeight="bold">ESTIMATED FARE</Typography>
+                  <Typography variant="h5" fontWeight="800" color="#10b981" sx={{ mt: 0.5 }}>
+                    ₹{broadcastRequest.estimatedFare}
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 3, pt: 0, gap: 1.5 }}>
+          <Button 
+            onClick={() => setOpenBroadcastModal(false)}
+            variant="outlined"
+            fullWidth
+            sx={{ 
+              borderRadius: 2, 
+              py: 1.25, 
+              fontWeight: "bold",
+              borderColor: "#cbd5e1",
+              color: "#64748b",
+              "&:hover": { borderColor: "#94a3b8", backgroundColor: "#f8fafc" }
+            }}
+          >
+            Decline
+          </Button>
+          <Button 
+            onClick={handleAcceptBroadcast}
+            variant="contained"
+            fullWidth
+            sx={{ 
+              borderRadius: 2, 
+              py: 1.25, 
+              fontWeight: "bold",
+              backgroundColor: "#0052cc",
+              "&:hover": { backgroundColor: "#0047b3" }
+            }}
+          >
+            Accept Ride
+          </Button>
+        </DialogActions>
+      </Dialog>
 
     
   

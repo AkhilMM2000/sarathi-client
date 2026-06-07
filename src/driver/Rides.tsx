@@ -365,31 +365,36 @@ const DriverBookings: React.FC = () => {
                             
                             <Box display="flex" gap={1.5}>
                               <Tooltip title="Start Chat">
-                                <IconButton 
-                                  onClick={() => {
-                                    setChatRideId(booking._id);
-                                    setRecieverId(booking.userId?._id || "");
-                                    setOpenChat(true);
-                                  }}
-                                  sx={{ 
-                                    bgcolor: alpha(colors.accentPrimary, 0.1), color: colors.accentPrimary,
-                                    '&:hover': { bgcolor: colors.accentPrimary, color: colors.bgMain }
-                                  }}
-                                >
-                                  <MessageSquare size={20} />
-                                </IconButton>
+                                <span>
+                                  <IconButton 
+                                    disabled={booking.status !== "CONFIRMED"}
+                                    onClick={() => {
+                                      setChatRideId(booking._id);
+                                      setRecieverId(booking.userId?._id || "");
+                                      setOpenChat(true);
+                                    }}
+                                    sx={{ 
+                                      bgcolor: alpha(colors.accentPrimary, 0.1), color: colors.accentPrimary,
+                                      '&:hover': { bgcolor: colors.accentPrimary, color: colors.bgMain }
+                                    }}
+                                  >
+                                    <MessageSquare size={20} />
+                                  </IconButton>
+                                </span>
                               </Tooltip>
                               <Tooltip title="Video Call">
-                                <IconButton 
-                                  disabled={calling}
-                                  onClick={() => handleCall(authdriver?._id || "", booking.userId?._id || "", authdriver?.name || "Driver", "driver")}
-                                  sx={{ 
-                                    bgcolor: alpha(colors.accentSecondary, 0.1), color: colors.accentSecondary,
-                                    '&:hover': { bgcolor: colors.accentSecondary, color: colors.bgMain }
-                                  }}
-                                >
-                                  <Video size={20} />
-                                </IconButton>
+                                <span>
+                                  <IconButton 
+                                    disabled={calling || booking.status !== "CONFIRMED"}
+                                    onClick={() => handleCall(authdriver?._id || "", booking.userId?._id || "", authdriver?.name || "Driver", "driver")}
+                                    sx={{ 
+                                      bgcolor: alpha(colors.accentSecondary, 0.1), color: colors.accentSecondary,
+                                      '&:hover': { bgcolor: colors.accentSecondary, color: colors.bgMain }
+                                    }}
+                                  >
+                                    <Video size={20} />
+                                  </IconButton>
+                                </span>
                               </Tooltip>
                             </Box>
                           </Box>

@@ -480,11 +480,12 @@ if (rides.length === 0) {
                     <Box display="flex" gap={3}>
                     {/* Chat Button */}
                     <IconButton 
+                      disabled={ride.status !== "CONFIRMED"}
                       color="primary"
                       aria-label="chat with driver"
                       onClick={() => {
                         setChatRideId(ride._id); 
-                        setChatUserId(typeof ride.driverId === "object" ? ride.driverId._id : ''); 
+                        setChatUserId(typeof ride.driverId === "object" ? (ride.driverId as PopulatedDriver)._id : ''); 
                         setOpen(true);
                       }}
                       
@@ -501,13 +502,13 @@ if (rides.length === 0) {
                     </IconButton>
  {/* Video Call Button */}
  <IconButton 
- disabled={calling}
+ disabled={calling || ride.status !== "CONFIRMED"}
         color="secondary"
         aria-label="video call with driver"
         onClick={() =>
           handleCall(
             user?._id || '',         
-            typeof ride.driverId === "object" ? ride.driverId._id:'' ,       
+            typeof ride.driverId === "object" ? (ride.driverId as PopulatedDriver)._id:'' ,       
             user?.name || 'User',  
             'user'                  
           )
