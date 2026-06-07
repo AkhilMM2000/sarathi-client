@@ -44,7 +44,7 @@ const AppRoutes = () => {
         <Route path="/" element={<UserBody/>}>
         <Route path="/home" element={<UserHome/>}/>
         <Route path="/drivers" element={<DriverListedPage/>}/>
-        <Route path="/bookslot/:driverID" element={<BookDriver/>}/>
+        <Route path="/bookslot/:driverID?" element={<BookDriver/>}/>
         </Route>
        
       

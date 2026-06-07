@@ -18,6 +18,8 @@ interface BookingData {
   to: string;
   distance: string;
   duration: string;
+  fromLat?: number;
+  fromLng?: number;
 }
 import { DriverData } from "../constant/types";
 import { getDriverWithDistance } from "../Api/driverService";
@@ -120,6 +122,8 @@ console.log('endate',endDate?.toDate())
             driverId: driverData?._id,
             fromLocation: bookingData?.from || "",
             toLocation: bookingData?.to,
+            fromLat: bookingData?.fromLat,
+            fromLng: bookingData?.fromLng,
             startDate: startDate,
             endDate: endDate?.toDate(),
             estimatedKm:  bookingData?.distance.replace(/,/g, "").replace(" km", ""),
@@ -128,6 +132,8 @@ console.log('endate',endDate?.toDate())
         : {
              fromLocation: bookingData?.from || "",
              toLocation: bookingData?.to,
+             fromLat: bookingData?.fromLat,
+             fromLng: bookingData?.fromLng,
             driverId: driverData?._id,
             startDate: singleDate?.toISOString(),
             estimatedKm:  bookingData?.distance.replace(/,/g, "").replace(" km", ""),
@@ -191,16 +197,40 @@ console.log('endate',endDate?.toDate())
         </Paper>
       </div>
       
-      {/* Right side - Driver details */}
+      {/* Right side - Driver details or Matchmaking Radar */}
       <div className="w-full lg:w-1/2">
         <Paper elevation={3} className="p-6 rounded-lg h-full">
           <div className="flex items-center mb-4">
             <DirectionsCarIcon className="text-blue-600 mr-2" />
-            <Typography variant="h6" className="font-semibold">Available Drivers</Typography>
+            <Typography variant="h6" className="font-semibold">
+              {driverID ? "Assigned Driver" : "Matchmaking Status"}
+            </Typography>
           </div>
           
-          { !driverData?._id? (
-          
+          {!driverID ? (
+            <Box className="border rounded-lg p-6 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl relative overflow-hidden flex flex-col items-center justify-center min-h-[220px]">
+              {/* Radar pulse effect */}
+              <Box className="relative flex items-center justify-center mb-4">
+                <span className="animate-ping absolute inline-flex h-12 w-12 rounded-full bg-blue-400 opacity-75"></span>
+                <span className="animate-pulse absolute inline-flex h-8 w-8 rounded-full bg-blue-500 opacity-90"></span>
+                <span className="relative inline-flex rounded-full h-8 w-8 bg-blue-600 items-center justify-center">
+                  <DirectionsCarIcon sx={{ fontSize: 18, color: 'white' }} />
+                </span>
+              </Box>
+              
+              <Typography variant="h6" className="font-bold text-center mb-2 text-blue-400">
+                Broadcasting to Nearby Drivers
+              </Typography>
+              <Typography variant="body2" className="text-center text-slate-300 max-w-sm leading-relaxed mb-4">
+                Your request will be broadcast to all online, approved drivers within 20 km road distance. The first available driver to accept will be instantly assigned.
+              </Typography>
+              
+              <div className="flex items-center gap-2 text-xs bg-slate-800 px-3 py-1.5 rounded-full text-slate-400 border border-slate-700">
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                System ready to broadcast
+              </div>
+            </Box>
+          ) : !driverData?._id ? (
             <Typography className="text-center py-12">No drivers available in this area</Typography>
           ) : (
             <Box className="border rounded-lg p-4 transition-all hover:shadow-lg bg-white">
@@ -395,7 +425,7 @@ console.log('endate',endDate?.toDate())
           className="py-3 px-8 text-lg font-medium rounded-full bg-blue-700 hover:bg-blue-800"
           startIcon={<DirectionsCarIcon />}
         >
-          Book Your Driver Now
+          {driverID ? "Book Your Driver Now" : "Confirm & Broadcast Request"}
         </Button>
     </div>
   </div>

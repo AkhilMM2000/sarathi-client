@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Box, TextField, Typography } from "@mui/material";
 
 interface LocationSelectorProps {
-  onLocationSelect: (data: { from: string; to: string; distance: string; duration: string }) => void;
+  onLocationSelect: (data: { from: string; to: string; distance: string; duration: string; fromLat?: number; fromLng?: number }) => void;
 }
 
 const LocationSelector: React.FC<LocationSelectorProps> = ({ onLocationSelect }) => {
@@ -10,6 +10,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onLocationSelect })
   const [to, setTo] = useState<string>("");
   const [distance, setDistance] = useState<string>("");
   const [duration, setDuration] = useState<string>("");
+  const [fromCoords, setFromCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   const fromRef = useRef<HTMLInputElement | null>(null);
   const toRef = useRef<HTMLInputElement | null>(null);
@@ -24,21 +25,20 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onLocationSelect })
     const autocompleteFrom = new google.maps.places.Autocomplete(
       fromRef.current as HTMLInputElement,
       { componentRestrictions: { country: "IN" } }
-
     );
     autocompleteFrom.addListener("place_changed", () => {
       const place = autocompleteFrom.getPlace();
-      
-      
       if (place.formatted_address) {
         setFrom(place.formatted_address);
+        const lat = place.geometry?.location?.lat() || 0;
+        const lng = place.geometry?.location?.lng() || 0;
+        setFromCoords({ lat, lng });
       }
     });
 
     const autocompleteTo = new google.maps.places.Autocomplete(
       toRef.current as HTMLInputElement,
       {componentRestrictions:{country:"IN"}}
-    
     );
     autocompleteTo.addListener("place_changed", () => {
       const place = autocompleteTo.getPlace();
@@ -59,22 +59,22 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ onLocationSelect })
         },
         (response, status) => {
           if (status === "OK" && response?.rows[0].elements[0].status === "OK") {
-          
             setDistance(response.rows[0].elements[0].distance.text);
             setDuration(response.rows[0].elements[0].duration.text);
-            
 
             onLocationSelect({
               from,
               to,
               distance: response.rows[0].elements[0].distance.text,
               duration: response.rows[0].elements[0].duration.text,
+              fromLat: fromCoords?.lat,
+              fromLng: fromCoords?.lng,
             });
           }
         }
       );
     }
-  }, [from, to, onLocationSelect]);
+  }, [from, to, fromCoords, onLocationSelect]);
 
   return (
     <Box className="w-full max-w-md">

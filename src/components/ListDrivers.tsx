@@ -61,15 +61,35 @@ debouncedFetchDrivers('')
         minHeight: "100vh",
       }}
     >
-      <Typography
-        variant="h3"
-        fontWeight="800"
-        textAlign="center"
-        mb={4}
-        sx={{ color: '#09090b', letterSpacing: '-0.02em' }}
-      >
-        Select Your Driver
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
+        <Typography
+          variant="h4"
+          fontWeight="800"
+          sx={{ color: '#09090b', letterSpacing: '-0.02em', textAlign: { xs: 'center', sm: 'left' } }}
+        >
+          Select Your Driver
+        </Typography>
+        <Button
+          component={Link}
+          to="/bookslot"
+          variant="contained"
+          sx={{
+            borderRadius: 2,
+            px: 4,
+            py: 1.5,
+            fontWeight: "800",
+            backgroundColor: '#0052cc',
+            color: 'white',
+            boxShadow: 'none',
+            "&:hover": {
+              backgroundColor: '#0047b3',
+              boxShadow: 'none'
+            }
+          }}
+        >
+          Request General Ride
+        </Button>
+      </Box>
 
       <Box
         sx={{
@@ -263,6 +283,27 @@ debouncedFetchDrivers('')
         <Typography variant="body1" sx={{ color: '#52525b', lineHeight: 1.6, px: { xs: 2, sm: 6 } }}>
           There are currently no drivers registered close to your saved location. We are constantly expanding, so please check back soon or try searching a different area!
         </Typography>
+        <Button
+          component={Link}
+          to="/bookslot"
+          variant="contained"
+          sx={{
+            mt: 3,
+            borderRadius: 2,
+            px: 4,
+            py: 1.5,
+            fontWeight: "800",
+            backgroundColor: '#0052cc',
+            color: 'white',
+            boxShadow: 'none',
+            "&:hover": {
+              backgroundColor: '#0047b3',
+              boxShadow: 'none'
+            }
+          }}
+        >
+          Broadcast Ride Request Anyway
+        </Button>
       </Box>
     </Grid>
   )}
