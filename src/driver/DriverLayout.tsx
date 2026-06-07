@@ -93,7 +93,7 @@ const { playRingtone, stopRingtone } = useRingtone('/sounds/ringtone.mp3');
     if (!broadcastRequest) return;
     try {
       const response = await DriverAPI.patch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/booking/accept/${broadcastRequest.bookingId}`
+        `${import.meta.env.VITE_API_BASE_URL}/booking/accept/${broadcastRequest.bookingId}`
       );
       if (response.data.success) {
         toast.success("Ride accepted successfully!");
