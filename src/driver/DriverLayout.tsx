@@ -174,12 +174,13 @@ useEffect(()=>{
       socket.emit('driver:online', driverId); 
     }
   
-    socket.on('booking:new', (data) => {
+    // Named handlers to prevent cross-component listener removal
+    const handleNewBooking = (data: any) => {
       setBroadcastRequest(data);
       setOpenBroadcastModal(true);
-    });
-  
-    socket.on('booking:assigned', ({ bookingId }) => {
+    };
+
+    const handleAssignedBooking = ({ bookingId }: { bookingId: string }) => {
       setBroadcastRequest((prev) => {
         if (prev && prev.bookingId === bookingId) {
           setOpenBroadcastModal(false);
@@ -187,28 +188,31 @@ useEffect(()=>{
         }
         return prev;
       });
-    });
-  
-  socket.on('cancel:booking',({reason,startDate})=>{
-    const formattedDate = moment(startDate).format("MMMM D, dddd");
-    setMessage(`cancel booking  ${formattedDate} due to ${reason}`);
-      
+    };
+
+    const handleCancelBooking = ({ reason, startDate }: any) => {
+      const formattedDate = moment(startDate).format("MMMM D, dddd");
+      setMessage(`cancel booking  ${formattedDate} due to ${reason}`);
       setOpen(true);
-  })
+    };
 
- socket.on('payment:status',({status,startDate})=>{
+    const handlePaymentStatus = ({ status, startDate }: any) => {
+      console.log(status, startDate, "paymentStatus event")
+      const formattedDate = moment(startDate).format("MMMM D, dddd");
+      setMessage(`Your ride payment has been ${status} on ${formattedDate}.`);
+      setOpen(true);
+    };
+
+    socket.on('booking:new', handleNewBooking);
+    socket.on('booking:assigned', handleAssignedBooking);
+    socket.on('cancel:booking', handleCancelBooking);
+    socket.on('payment:status', handlePaymentStatus);
   
-  console.log(status,startDate,"paymentStatus event")
-  const formattedDate = moment(startDate).format("MMMM D, dddd");
-  setMessage(`Your ride payment has been ${status} on ${formattedDate}.`);
-  setOpen(true);
- })
-
     return () => {
-      socket.off('cancel:booking')
-      socket.off('booking:new')
-      socket.off('booking:assigned')
-      socket.off('payment:status')
+      socket.off('booking:new', handleNewBooking);
+      socket.off('booking:assigned', handleAssignedBooking);
+      socket.off('cancel:booking', handleCancelBooking);
+      socket.off('payment:status', handlePaymentStatus);
     };
   }, [driverId]);
   

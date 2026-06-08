@@ -150,43 +150,51 @@ const DriverBookings: React.FC = () => {
   useEffect(() => {
     const socket = CreatesocketConnection();
 
-    socket.on("cancel:booking", ({ status, reason, bookingId }) => {
+    // Named handlers to prevent cross-component listener removal
+    const handleCancelBooking = ({ status, reason, bookingId }: any) => {
       setBookings((prev) => prev.map((b) => b._id === bookingId ? { ...b, status, reason } : b));
-    });
+    };
 
-    socket.on("walletRidepaymentSuccess", ({ rideId }) => {
+    const handleWalletPaymentSuccess = ({ rideId }: any) => {
       setBookings((prev) => prev.filter((b) => b._id !== rideId));
       setSnackbarMessage("Payment received successfully via Wallet!");
       setSnackbarOpen(true);
-    });
+    };
 
-    socket.on("cancelbookingSuccess", ({ message, rideId }) => {
+    const handleCancelBookingSuccess = ({ message, rideId }: any) => {
       setBookings((prev) => prev.filter((b) => b._id !== rideId));
       setSnackbarMessage(message || "Ride has been cancelled.");
       setSnackbarOpen(true);
-    });
+    };
 
-    socket.on("ridePaymentSuccessAck", ({ message, rideId }) => {
+    const handleRidePaymentSuccessAck = ({ message, rideId }: any) => {
       setBookings((prev) => prev.filter((b) => b._id !== rideId));
       setSnackbarMessage(message);
       setSnackbarOpen(true);
-    });
+    };
 
-    socket.on('payment:status', ({ bookingId }) => {
+    const handlePaymentStatus = ({ bookingId }: any) => {
       setBookings((prev) => prev.filter((b) => b._id !== bookingId));
-    });
+    };
 
-    socket.on('booking:new', ({ newRide }: { newRide: Booking }) => {
+    const handleNewBooking = ({ newRide }: { newRide: Booking }) => {
       setBookings((prev) => [newRide, ...prev].slice(0, 2));
-    });
+    };
+
+    socket.on("cancel:booking", handleCancelBooking);
+    socket.on("walletRidepaymentSuccess", handleWalletPaymentSuccess);
+    socket.on("cancelbookingSuccess", handleCancelBookingSuccess);
+    socket.on("ridePaymentSuccessAck", handleRidePaymentSuccessAck);
+    socket.on('payment:status', handlePaymentStatus);
+    socket.on('booking:new', handleNewBooking);
 
     return () => {
-      socket.off('booking:new');
-      socket.off("cancel:booking");
-      socket.off("walletRidepaymentSuccess");
-      socket.off("cancelbookingSuccess");
-      socket.off("ridePaymentSuccessAck");
-      socket.off('payment:status');
+      socket.off("cancel:booking", handleCancelBooking);
+      socket.off("walletRidepaymentSuccess", handleWalletPaymentSuccess);
+      socket.off("cancelbookingSuccess", handleCancelBookingSuccess);
+      socket.off("ridePaymentSuccessAck", handleRidePaymentSuccessAck);
+      socket.off('payment:status', handlePaymentStatus);
+      socket.off('booking:new', handleNewBooking);
     };
   }, []);
 
