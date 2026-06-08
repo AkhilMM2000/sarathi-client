@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import LocationSelector from "../components/Bookdriver";
-import { Typography, Avatar, Rating,  Button, Box, Paper, Divider, FormGroup, FormControlLabel, Checkbox, Grid, Snackbar, Alert } from "@mui/material";
+import { Typography, Avatar, Rating,  Button, Box, Paper, Divider, FormGroup, FormControlLabel, Checkbox, Grid, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -39,6 +40,7 @@ const [isRangeMode, setIsRangeMode] = useState<boolean>(false);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [_daysInRange, setDaysInRange] = useState<number>(0);
   const [openReviewModal, setOpenReviewModal] = useState(false);
+  const [openNoDriverModal, setOpenNoDriverModal] = useState(false);
   const navigate=useNavigate()
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' | 'info' | 'warning' }>({ open: false, message: "", severity: "success" });
   const handleCloseSnackbar = () => {
@@ -152,11 +154,16 @@ console.log('endate',endDate?.toDate())
     
     } catch (error:any) {
       console.error("Error booking driver:", error);
-    setSnackbar({
-      open: true,
-      message: error.response?.data?.message || "Failed to book driver",
-      severity: "error",
-    });
+      const message = error.response?.data?.message || "Failed to book driver";
+      if (message.includes("No drivers available within 20km")) {
+        setOpenNoDriverModal(true);
+      } else {
+        setSnackbar({
+          open: true,
+          message,
+          severity: "error",
+        });
+      }
     }
   };
 
@@ -415,6 +422,92 @@ console.log('endate',endDate?.toDate())
           driverId={driverData?._id }
         />
       )}
+
+      {/* Premium No Drivers Nearby Dialog */}
+      <Dialog
+        open={openNoDriverModal}
+        onClose={() => setOpenNoDriverModal(false)}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            overflow: "hidden",
+            boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
+            p: 1
+          }
+        }}
+      >
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', pt: 4, pb: 2 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 80,
+              height: 80,
+              borderRadius: '50%',
+              bgcolor: 'rgba(217, 119, 6, 0.1)',
+              mb: 3,
+              animation: 'pulse 2s infinite ease-in-out',
+              '@keyframes pulse': {
+                '0%, 100%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.05)' }
+              }
+            }}
+          >
+            <WarningAmberIcon sx={{ fontSize: 48, color: '#d97706' }} />
+          </Box>
+          <Typography variant="h5" sx={{ fontWeight: '800', color: '#1e293b', mb: 1.5 }}>
+            No Drivers Nearby
+          </Typography>
+          <Typography variant="body1" sx={{ color: '#64748b', mb: 2, lineHeight: 1.6, px: 1 }}>
+            We couldn't find any available drivers within a 20km road distance of your pickup location.
+          </Typography>
+          <Box sx={{ bgcolor: '#fffbeb', border: '1px solid #fef3c7', borderRadius: 2, p: 2, width: '100%', mb: 1 }}>
+            <Typography variant="body2" sx={{ color: '#b45309', fontWeight: 'medium' }}>
+              💡 Try adjusting your pickup location or request again in a few minutes.
+            </Typography>
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ flexDirection: 'column', gap: 1.5, px: 3, pb: 3, pt: 1 }}>
+          <Button
+            onClick={() => {
+              setOpenNoDriverModal(false);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            variant="contained"
+            fullWidth
+            sx={{
+              borderRadius: 2.5,
+              py: 1.5,
+              fontWeight: 'bold',
+              textTransform: 'none',
+              fontSize: '1rem',
+              backgroundColor: '#0052cc',
+              '&:hover': { backgroundColor: '#0047b3' }
+            }}
+          >
+            Adjust Location
+          </Button>
+          <Button
+            onClick={() => setOpenNoDriverModal(false)}
+            variant="text"
+            fullWidth
+            sx={{
+              borderRadius: 2.5,
+              py: 1,
+              fontWeight: 'bold',
+              textTransform: 'none',
+              color: '#64748b',
+              '&:hover': { backgroundColor: '#f1f5f9' }
+            }}
+          >
+            Dismiss
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     {/* Book Now Button */}
     <div className="flex justify-center">
     <Button 
