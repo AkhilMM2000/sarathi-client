@@ -179,9 +179,11 @@ useEffect(() => {
             ? { 
                 ...ride,  
                 status: status,
-                driverId: driver,
-                drivername: driver?.name,
-                driverImage: driver?.profileImage
+                ...(driver && {
+                  driverId: driver,
+                  drivername: driver.name,
+                  driverImage: driver.profileImage
+                })
               }
             : ride
         )
