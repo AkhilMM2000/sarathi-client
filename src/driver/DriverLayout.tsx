@@ -180,11 +180,13 @@ useEffect(()=>{
       setOpenBroadcastModal(true);
     };
 
-    const handleAssignedBooking = ({ bookingId }: { bookingId: string }) => {
+    const handleAssignedBooking = ({ bookingId, driverId: acceptingDriverId }: { bookingId: string, driverId?: string }) => {
       setBroadcastRequest((prev) => {
         if (prev && prev.bookingId === bookingId) {
           setOpenBroadcastModal(false);
-          toast.info("The ride request has expired.");
+          if (acceptingDriverId !== driverId) {
+            toast.info("The ride request has expired.");
+          }
           return null;
         }
         return prev;
