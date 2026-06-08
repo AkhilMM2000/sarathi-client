@@ -171,16 +171,22 @@ useEffect(() => {
     setSnackbarMessage(message);
     setOpenSnackbar(true); 
   });
-  socket.on("booking:confirmation", ({status,startDate,bookingId}) => {
-    console.log("Ride.tsx received booking confirmation:", status,startDate);
-    setRides(prevRides =>
-      prevRides.map(ride =>
-        ride._id === bookingId
-          ? { ...ride,  status: status }
-          : ride
-      )
-    );
-  });
+    socket.on("booking:confirmation", ({status,startDate,bookingId,driver}) => {
+      console.log("Ride.tsx received booking confirmation:", status,startDate,driver);
+      setRides(prevRides =>
+        prevRides.map(ride =>
+          ride._id === bookingId
+            ? { 
+                ...ride,  
+                status: status,
+                driverId: driver,
+                drivername: driver?.name,
+                driverImage: driver?.profileImage
+              }
+            : ride
+        )
+      );
+    });
 
    socket.on("booking:reject", ({bookingId}) => {
       
