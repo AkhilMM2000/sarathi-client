@@ -7,7 +7,7 @@ import { useSocketListener } from "./hooks/useSocketListener";
 import { Alert, Snackbar } from "@mui/material";
 
 function App() {
-  const { message, open, setOpen } = useSocketListener();
+  const { message, open, handleClose } = useSocketListener();
 console.log(message, open, "message from socket")
  return ( 
  
@@ -21,7 +21,7 @@ console.log(message, open, "message from socket")
  <Snackbar
   open={open}
   autoHideDuration={6000}
-  onClose={() => setOpen(false)}
+  onClose={handleClose}
   anchorOrigin={{ vertical: "top", horizontal: "center" }}
   sx={{
     width: '100%',
@@ -32,7 +32,7 @@ console.log(message, open, "message from socket")
   }}
 >
   <Alert 
-    onClose={() => setOpen(false)} 
+    onClose={handleClose} 
     severity="info" 
     variant="filled"
     sx={{ 

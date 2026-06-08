@@ -184,6 +184,7 @@ useEffect(()=>{
       setBroadcastRequest((prev) => {
         if (prev && prev.bookingId === bookingId) {
           setOpenBroadcastModal(false);
+          toast.info("The ride request has expired.");
           return null;
         }
         return prev;

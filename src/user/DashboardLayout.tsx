@@ -16,7 +16,14 @@ import {
   IconButton,
   useMediaQuery,
   useTheme,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button
 } from "@mui/material";
+import { UserAPI } from '../Api/AxiosInterceptor';
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import CommuteIcon from "@mui/icons-material/Commute";
@@ -73,20 +80,60 @@ const navigate=useNavigate()
         toast.error(error.message);
     }
 };
-useEffect(() => {
-  const fetchLoggedUser = async () => {
+  useEffect(() => {
+    const fetchLoggedUser = async () => {
+      try {
+        const user = await getLoggedUserApi();
+        console.log(user);
+        
+        dispatch(setAuthUser(user)); 
+      } catch (error) {
+        console.error("Failed to fetch logged user:", error);
+      }
+    };
+
+    fetchLoggedUser();
+  }, [dispatch]); 
+
+  const [expiredBooking, setExpiredBooking] = useState<{ id: string; fromLocation: string } | null>(null);
+  const [showExpiredModal, setShowExpiredModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!Currentuser?._id) return;
+
+    const checkExpiredBookings = async () => {
+      try {
+        const res = await UserAPI.get('/bookslot?page=1&limit=10');
+        const bookings = res.data.data;
+        const expired = bookings.find((b: any) => b.status === 'EXPIRED');
+        if (expired) {
+          setExpiredBooking({
+            id: expired._id,
+            fromLocation: expired.fromLocation || "N/A"
+          });
+          setShowExpiredModal(true);
+        }
+      } catch (error) {
+        console.error("Error checking expired bookings:", error);
+      }
+    };
+
+    checkExpiredBookings();
+  }, [Currentuser]);
+
+  const handleAcknowledgeExpired = async () => {
+    if (!expiredBooking) return;
     try {
-      const user = await getLoggedUserApi();
-      console.log(user);
-      
-      dispatch(setAuthUser(user)); 
+      await UserAPI.patch(`/booking/acknowledge/${expiredBooking.id}`);
+      setShowExpiredModal(false);
+      setExpiredBooking(null);
+      if (location.pathname === "/userhome/rides") {
+        window.location.reload();
+      }
     } catch (error) {
-      console.error("Failed to fetch logged user:", error);
+      console.error("Failed to acknowledge expired booking:", error);
     }
   };
-
-  fetchLoggedUser();
-}, [dispatch]); 
 
 //video call management
 const [callModalOpen, setCallModalOpen] = useState<boolean>(false);
@@ -375,6 +422,27 @@ useEffect(()=>{
   onAccept={handleAccept}
   onReject={handleReject}
       />
+      {/* Expired Booking Modal */}
+      <Dialog
+        open={showExpiredModal}
+        onClose={handleAcknowledgeExpired}
+        aria-labelledby="expired-dialog-title"
+        aria-describedby="expired-dialog-description"
+      >
+        <DialogTitle id="expired-dialog-title">
+          {"Ride Request Expired"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="expired-dialog-description">
+            Your previous ride request from <strong>{expiredBooking?.fromLocation}</strong> was not accepted by any driver and has expired.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAcknowledgeExpired} color="primary" autoFocus variant="contained">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
