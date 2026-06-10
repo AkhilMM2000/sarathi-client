@@ -492,8 +492,9 @@ if (rides.length === 0) {
                       color="primary"
                       aria-label="chat with driver"
                       onClick={() => {
+                        const targetDriverId = typeof ride.driverId === "object" && ride.driverId !== null ? (ride.driverId as PopulatedDriver)._id : ride.driverId;
                         setChatRideId(ride._id); 
-                        setChatUserId(typeof ride.driverId === "object" ? (ride.driverId as PopulatedDriver)._id : ''); 
+                        setChatUserId(targetDriverId || ''); 
                         setOpen(true);
                       }}
                       
@@ -513,14 +514,15 @@ if (rides.length === 0) {
  disabled={calling || ride.status !== "CONFIRMED"}
         color="secondary"
         aria-label="video call with driver"
-        onClick={() =>
+        onClick={() => {
+          const targetDriverId = typeof ride.driverId === "object" && ride.driverId !== null ? (ride.driverId as PopulatedDriver)._id : ride.driverId;
           handleCall(
             user?._id || '',         
-            typeof ride.driverId === "object" ? (ride.driverId as PopulatedDriver)._id:'' ,       
+            targetDriverId || '',       
             user?.name || 'User',  
             'user'                  
-          )
-        }
+          );
+        }}
           
         
         sx={{ 
