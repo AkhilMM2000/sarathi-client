@@ -384,11 +384,9 @@ const DriverBookings: React.FC = () => {
                                   <IconButton 
                                     disabled={booking.status !== "CONFIRMED"}
                                     onClick={() => {
-                                      console.log("[DIAGNOSTIC] Chat click. complete booking.userId value:", booking.userId);
-                                      console.log("[DIAGNOSTIC] Chat click. typeof booking.userId:", typeof booking.userId);
-                                      console.log("[DIAGNOSTIC] Chat click. passed receiverId:", booking.userId?._id || "");
+                                      const targetUserId = typeof booking.userId === "object" ? booking.userId?._id : booking.userId;
                                       setChatRideId(booking._id);
-                                      setRecieverId(booking.userId?._id || "");
+                                      setRecieverId(targetUserId || "");
                                       setOpenChat(true);
                                     }}
                                     sx={{ 
@@ -405,11 +403,8 @@ const DriverBookings: React.FC = () => {
                                   <IconButton 
                                     disabled={calling || booking.status !== "CONFIRMED"}
                                     onClick={() => {
-                                      console.log("[DIAGNOSTIC] Call click. complete booking.userId value:", booking.userId);
-                                      console.log("[DIAGNOSTIC] Call click. typeof booking.userId:", typeof booking.userId);
-                                      console.log("[DIAGNOSTIC] Call click. passed toId (booking.userId?._id):", booking.userId?._id || "");
-                                      console.log("[DIAGNOSTIC] Call click. passed toId (booking.userId direct):", (booking.userId as any) || "");
-                                      handleCall(authdriver?._id || "", booking.userId?._id || "", authdriver?.name || "Driver", "driver");
+                                      const targetUserId = typeof booking.userId === "object" ? booking.userId?._id : booking.userId;
+                                      handleCall(authdriver?._id || "", targetUserId || "", authdriver?.name || "Driver", "driver");
                                     }}
                                     sx={{ 
                                       bgcolor: alpha(colors.accentSecondary, 0.1), color: colors.accentSecondary,
