@@ -88,6 +88,7 @@ const { playRingtone, stopRingtone } = useRingtone('/sounds/ringtone.mp3');
     startDate: string;
   } | null>(null);
   const [openBroadcastModal, setOpenBroadcastModal] = useState<boolean>(false);
+  const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
 
   const handleAcceptBroadcast = async () => {
     if (!broadcastRequest) return;
@@ -99,6 +100,7 @@ const { playRingtone, stopRingtone } = useRingtone('/sounds/ringtone.mp3');
         toast.success("Ride accepted successfully!");
         setOpenBroadcastModal(false);
         setBroadcastRequest(null);
+        setRefreshTrigger((prev) => prev + 1);
         navigate("/driver/rides");
       }
     } catch (error: any) {
@@ -477,7 +479,7 @@ useEffect(()=>{
           p: { xs: 1, sm: 2, md: 3 }, 
           minHeight: "calc(100vh - 48px)"
         }}>
-          <Outlet />
+          <Outlet context={{ refreshTrigger }} />
         </Box>
       </Box>
       <Snackbar

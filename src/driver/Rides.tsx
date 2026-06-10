@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -85,6 +86,7 @@ const modalStyle = {
 };
 
 const DriverBookings: React.FC = () => {
+  const { refreshTrigger } = useOutletContext<{ refreshTrigger: number }>() || { refreshTrigger: 0 };
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
@@ -134,7 +136,7 @@ const DriverBookings: React.FC = () => {
 
   useEffect(() => {
     fetchBookings(page);
-  }, [page, refresh]);
+  }, [page, refresh, refreshTrigger]);
 
   const authdriver = useSelector((state: RootState) => state.driverStore.driver);
   const { initiateCall, calling } = useCallRequest();

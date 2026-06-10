@@ -36,7 +36,7 @@ import { AppDispatch, RootState } from "../store/ReduxStore";
 import { useDispatch, useSelector } from "react-redux";
 import { CreatesocketConnection } from "../constant/socket";
 import VideoCallIcon from '@mui/icons-material/VideoCall';
-import { updateUser } from "../store/slices/AuthuserStore";
+import { updateUser, UserState } from "../store/slices/AuthuserStore";
 import { useCallRequest } from "../hooks/useCallRequest";
 import RateDriverModal from "../components/RateDriverModal";
 interface PopulatedDriver {
@@ -101,7 +101,7 @@ const Rides: React.FC = () => {
   const [chatRideId, setChatRideId] = useState<string | null>(null);
 const [chatUserId, setChatUserId] = useState<string >('');
  const dispatch = useDispatch<AppDispatch>();
-const user = useSelector((state: RootState) => state.authUser.user);
+const user = useSelector((state: RootState) => (state.authUser as UserState).user);
 const [openSnackbar, setOpenSnackbar] = useState< boolean>(false);
 const [snackbarMessage, setSnackbarMessage] = useState<string>("");
 
