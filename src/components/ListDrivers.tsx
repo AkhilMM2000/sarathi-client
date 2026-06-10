@@ -214,7 +214,11 @@ debouncedFetchDrivers('')
                   variant="body2"
                   sx={{ color: '#10b981', fontWeight: 700 }}
                 >
-                  {Math.floor(driver.distance!)} km away
+                  {driver.distance === 0 
+                    ? "Nearby" 
+                    : driver.distance! < 1 
+                      ? `${Math.round(driver.distance! * 1000)} m away` 
+                      : `${driver.distance!.toFixed(1)} km away`}
                 </Typography>
               </Box>
             </Box>

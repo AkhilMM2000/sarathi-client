@@ -273,9 +273,23 @@ console.log('endate',endDate?.toDate())
                 </div>
 
                 {/* Driver Distance */}
-                <div className="text-center bg-blue-50 p-2 rounded-lg mt-2 sm:mt-0">
-                  <Typography variant="h6" className="font-bold text-blue-800">{driverData.distance} Km</Typography>
-                  <Typography variant="caption" className="text-blue-600">away</Typography>
+                <div className="text-center bg-blue-50 p-2 rounded-lg mt-2 sm:mt-0 min-w-[80px]">
+                  {driverData.distance === 0 ? (
+                    <>
+                      <Typography variant="h6" className="font-bold text-blue-800">Nearby</Typography>
+                      <Typography variant="caption" className="text-blue-600">very close</Typography>
+                    </>
+                  ) : driverData.distance < 1 ? (
+                    <>
+                      <Typography variant="h6" className="font-bold text-blue-800">{Math.round(driverData.distance * 1000)} m</Typography>
+                      <Typography variant="caption" className="text-blue-600">away</Typography>
+                    </>
+                  ) : (
+                    <>
+                      <Typography variant="h6" className="font-bold text-blue-800">{driverData.distance.toFixed(1)} Km</Typography>
+                      <Typography variant="caption" className="text-blue-600">away</Typography>
+                    </>
+                  )}
                 </div>
               </div>
 
