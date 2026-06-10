@@ -91,19 +91,23 @@ const { playRingtone, stopRingtone } = useRingtone('/sounds/ringtone.mp3');
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
 
   const handleAcceptBroadcast = async () => {
+    console.log("[DriverLayout] handleAcceptBroadcast triggered, broadcastRequest:", broadcastRequest);
     if (!broadcastRequest) return;
     try {
       const response = await DriverAPI.patch(
         `${import.meta.env.VITE_API_BASE_URL}/booking/accept/${broadcastRequest.bookingId}`
       );
+      console.log("[DriverLayout] accept API response:", response.data);
       if (response.data.success) {
         toast.success("Ride accepted successfully!");
         setOpenBroadcastModal(false);
         setBroadcastRequest(null);
+        console.log("[DriverLayout] Incrementing refreshTrigger");
         setRefreshTrigger((prev) => prev + 1);
         navigate("/driver/rides");
       }
     } catch (error: any) {
+      console.error("[DriverLayout] Error in handleAcceptBroadcast:", error);
       const msg = error?.response?.data?.message || "Failed to accept booking";
       toast.error(msg);
       setOpenBroadcastModal(false);

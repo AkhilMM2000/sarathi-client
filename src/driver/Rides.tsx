@@ -87,6 +87,7 @@ const modalStyle = {
 
 const DriverBookings: React.FC = () => {
   const { refreshTrigger } = useOutletContext<{ refreshTrigger: number }>() || { refreshTrigger: 0 };
+  console.log("[Rides] Rendered. refreshTrigger:", refreshTrigger);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
@@ -124,10 +125,13 @@ const DriverBookings: React.FC = () => {
   const fetchBookings = async (currentPage: number) => {
     try {
       setLoading(true);
-      const response = await DriverAPI.get(`/bookings?page=${currentPage}&limit=2`);
+      console.log(`[Rides] fetchBookings called. page=${currentPage}, time=${Date.now()}`);
+      const response = await DriverAPI.get(`/bookings?page=${currentPage}&limit=2&_t=${Date.now()}`);
+      console.log("[Rides] fetchBookings response:", response.data);
       setBookings(response.data.data);
       setTotalPages(response.data.totalPages);
     } catch (err: any) {
+      console.error("[Rides] fetchBookings failed:", err);
       setError(err.response?.data?.message || "Failed to fetch bookings.");
     } finally {
       setLoading(false);
@@ -135,6 +139,7 @@ const DriverBookings: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log("[Rides] useEffect triggered by changes to page, refresh, or refreshTrigger. refreshTrigger =", refreshTrigger);
     fetchBookings(page);
   }, [page, refresh, refreshTrigger]);
 
