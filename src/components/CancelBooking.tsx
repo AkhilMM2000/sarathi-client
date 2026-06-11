@@ -54,7 +54,7 @@ const CancelBookingModal: React.FC<{
         <DialogContent sx={{ pt: 3 }}>
           <Alert severity="warning" sx={{ mb: 3 }}>
             <Typography variant="body2" fontWeight="medium">
-              Please note: Cancellation is only available until 24 hours before the scheduled ride time.
+              Please note: Cancellation is only available until 9:00 PM of the day before the scheduled ride.
             </Typography>
           </Alert>
           
